@@ -14,9 +14,6 @@ import org.lwjgl.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * The core OpenGL 4.1 functionality. OpenGL 4.1 implementations support revision 4.10 of the OpenGL Shading Language.
@@ -32,7 +29,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_viewport_array.txt">ARB_viewport_array</a></li>
  * </ul>
  */
-public class GL41 {
+public class GL41 extends GL40 {
 
     /** Accepted by the {@code value} parameter of GetBooleanv, GetIntegerv, GetInteger64v, GetFloatv, and GetDoublev. */
     public static final int
@@ -136,7 +133,9 @@ public class GL41 {
      * 
      * Releases resources allocated by the shader compiler. This is a hint from the application, and does not prevent later use of the shader compiler.
      */
-    public static native void glReleaseShaderCompiler();
+    public static void glReleaseShaderCompiler() {
+        GL41C.glReleaseShaderCompiler();
+    }
 
     // --- [ glShaderBinary ] ---
 
@@ -146,7 +145,9 @@ public class GL41 {
      * @param count  the number of shader object handles contained in {@code shaders}
      * @param length the length of the array whose address is given in binary
      */
-    public static native void nglShaderBinary(int count, long shaders, int binaryformat, long binary, int length);
+    public static void nglShaderBinary(int count, long shaders, int binaryformat, long binary, int length) {
+        GL41C.nglShaderBinary(count, shaders, binaryformat, binary, length);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glShaderBinary">Reference Page</a></p>
@@ -158,13 +159,15 @@ public class GL41 {
      * @param binary       an array of bytes containing pre-compiled binary shader code
      */
     public static void glShaderBinary(@NativeType("GLuint const *") IntBuffer shaders, @NativeType("GLenum") int binaryformat, @NativeType("void const *") ByteBuffer binary) {
-        nglShaderBinary(shaders.remaining(), memAddress(shaders), binaryformat, memAddress(binary), binary.remaining());
+        GL41C.glShaderBinary(shaders, binaryformat, binary);
     }
 
     // --- [ glGetShaderPrecisionFormat ] ---
 
     /** Unsafe version of: {@link #glGetShaderPrecisionFormat GetShaderPrecisionFormat} */
-    public static native void nglGetShaderPrecisionFormat(int shadertype, int precisiontype, long range, long precision);
+    public static void nglGetShaderPrecisionFormat(int shadertype, int precisiontype, long range, long precision) {
+        GL41C.nglGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetShaderPrecisionFormat">Reference Page</a></p>
@@ -177,11 +180,7 @@ public class GL41 {
      * @param precision     the address of an integer into which the numeric precision of the implementation is written
      */
     public static void glGetShaderPrecisionFormat(@NativeType("GLenum") int shadertype, @NativeType("GLenum") int precisiontype, @NativeType("GLint *") IntBuffer range, @NativeType("GLint *") IntBuffer precision) {
-        if (CHECKS) {
-            check(range, 2);
-            check(precision, 1);
-        }
-        nglGetShaderPrecisionFormat(shadertype, precisiontype, memAddress(range), memAddress(precision));
+        GL41C.glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
     }
 
     /**
@@ -195,17 +194,7 @@ public class GL41 {
      */
     @NativeType("void")
     public static int glGetShaderPrecisionFormat(@NativeType("GLenum") int shadertype, @NativeType("GLenum") int precisiontype, @NativeType("GLint *") IntBuffer range) {
-        if (CHECKS) {
-            check(range, 2);
-        }
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer precision = stack.callocInt(1);
-            nglGetShaderPrecisionFormat(shadertype, precisiontype, memAddress(range), memAddress(precision));
-            return precision.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetShaderPrecisionFormat(shadertype, precisiontype, range);
     }
 
     // --- [ glDepthRangef ] ---
@@ -218,7 +207,9 @@ public class GL41 {
      * @param zNear the mapping of the near clipping plane to window coordinates. The initial value is 0.0f.
      * @param zFar  the mapping of the far clipping plane to window coordinates. The initial value is 1.0f.
      */
-    public static native void glDepthRangef(@NativeType("GLfloat") float zNear, @NativeType("GLfloat") float zFar);
+    public static void glDepthRangef(@NativeType("GLfloat") float zNear, @NativeType("GLfloat") float zFar) {
+        GL41C.glDepthRangef(zNear, zFar);
+    }
 
     // --- [ glClearDepthf ] ---
 
@@ -229,7 +220,9 @@ public class GL41 {
      *
      * @param depth the depth value used when the depth buffer is cleared. The initial value is 1.0f.
      */
-    public static native void glClearDepthf(@NativeType("GLfloat") float depth);
+    public static void glClearDepthf(@NativeType("GLfloat") float depth) {
+        GL41C.glClearDepthf(depth);
+    }
 
     // --- [ glGetProgramBinary ] ---
 
@@ -238,7 +231,9 @@ public class GL41 {
      *
      * @param bufSize the size of the buffer whose address is given by {@code binary}
      */
-    public static native void nglGetProgramBinary(int program, int bufSize, long length, long binaryFormat, long binary);
+    public static void nglGetProgramBinary(int program, int bufSize, long length, long binaryFormat, long binary) {
+        GL41C.nglGetProgramBinary(program, bufSize, length, binaryFormat, binary);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetProgramBinary">Reference Page</a></p>
@@ -251,11 +246,7 @@ public class GL41 {
      * @param binary       an array into which the GL will return {@code program}'s binary representation
      */
     public static void glGetProgramBinary(@NativeType("GLuint") int program, @Nullable @NativeType("GLsizei *") IntBuffer length, @NativeType("GLenum *") IntBuffer binaryFormat, @NativeType("void *") ByteBuffer binary) {
-        if (CHECKS) {
-            checkSafe(length, 1);
-            check(binaryFormat, 1);
-        }
-        nglGetProgramBinary(program, binary.remaining(), memAddressSafe(length), memAddress(binaryFormat), memAddress(binary));
+        GL41C.glGetProgramBinary(program, length, binaryFormat, binary);
     }
 
     // --- [ glProgramBinary ] ---
@@ -265,7 +256,9 @@ public class GL41 {
      *
      * @param length the number of bytes contained in {@code binary}
      */
-    public static native void nglProgramBinary(int program, int binaryFormat, long binary, int length);
+    public static void nglProgramBinary(int program, int binaryFormat, long binary, int length) {
+        GL41C.nglProgramBinary(program, binaryFormat, binary, length);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramBinary">Reference Page</a></p>
@@ -277,7 +270,7 @@ public class GL41 {
      * @param binary       an array containing the binary to be loaded into {@code program}
      */
     public static void glProgramBinary(@NativeType("GLuint") int program, @NativeType("GLenum") int binaryFormat, @NativeType("void const *") ByteBuffer binary) {
-        nglProgramBinary(program, binaryFormat, memAddress(binary), binary.remaining());
+        GL41C.glProgramBinary(program, binaryFormat, binary);
     }
 
     // --- [ glProgramParameteri ] ---
@@ -288,10 +281,12 @@ public class GL41 {
      * Specifies the integer value of a program object parameter.
      *
      * @param program the name of a program object whose parameter to modify
-     * @param pname   the name of the parameter to modify. One of:<br><table><tr><td>{@link #GL_PROGRAM_BINARY_RETRIEVABLE_HINT PROGRAM_BINARY_RETRIEVABLE_HINT}</td><td>{@link #GL_PROGRAM_SEPARABLE PROGRAM_SEPARABLE}</td></tr></table>
+     * @param pname   the name of the parameter to modify. One of:<br><table><tr><td>{@link GL41C#GL_PROGRAM_BINARY_RETRIEVABLE_HINT PROGRAM_BINARY_RETRIEVABLE_HINT}</td><td>{@link GL41C#GL_PROGRAM_SEPARABLE PROGRAM_SEPARABLE}</td></tr></table>
      * @param value   the new value of the parameter specified by {@code pname} for {@code program}
      */
-    public static native void glProgramParameteri(@NativeType("GLuint") int program, @NativeType("GLenum") int pname, @NativeType("GLint") int value);
+    public static void glProgramParameteri(@NativeType("GLuint") int program, @NativeType("GLenum") int pname, @NativeType("GLint") int value) {
+        GL41C.glProgramParameteri(program, pname, value);
+    }
 
     // --- [ glUseProgramStages ] ---
 
@@ -304,7 +299,9 @@ public class GL41 {
      * @param stages   a set of program stages to bind to the program pipeline object
      * @param program  the program object containing the shader executables to use in {@code pipeline}
      */
-    public static native void glUseProgramStages(@NativeType("GLuint") int pipeline, @NativeType("GLbitfield") int stages, @NativeType("GLuint") int program);
+    public static void glUseProgramStages(@NativeType("GLuint") int pipeline, @NativeType("GLbitfield") int stages, @NativeType("GLuint") int program) {
+        GL41C.glUseProgramStages(pipeline, stages, program);
+    }
 
     // --- [ glActiveShaderProgram ] ---
 
@@ -316,7 +313,9 @@ public class GL41 {
      * @param pipeline the program pipeline object to set the active program object for
      * @param program  the program object to set as the active program pipeline object {@code pipeline}
      */
-    public static native void glActiveShaderProgram(@NativeType("GLuint") int pipeline, @NativeType("GLuint") int program);
+    public static void glActiveShaderProgram(@NativeType("GLuint") int pipeline, @NativeType("GLuint") int program) {
+        GL41C.glActiveShaderProgram(pipeline, program);
+    }
 
     // --- [ glCreateShaderProgramv ] ---
 
@@ -325,7 +324,9 @@ public class GL41 {
      *
      * @param count the number of source code strings in the array {@code strings}
      */
-    public static native int nglCreateShaderProgramv(int type, int count, long strings);
+    public static int nglCreateShaderProgramv(int type, int count, long strings) {
+        return GL41C.nglCreateShaderProgramv(type, count, strings);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glCreateShaderProgramv">Reference Page</a></p>
@@ -364,7 +365,7 @@ public class GL41 {
      */
     @NativeType("GLuint")
     public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const **") PointerBuffer strings) {
-        return nglCreateShaderProgramv(type, strings.remaining(), memAddress(strings));
+        return GL41C.glCreateShaderProgramv(type, strings);
     }
 
     /**
@@ -404,15 +405,7 @@ public class GL41 {
      */
     @NativeType("GLuint")
     public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const **") CharSequence... strings) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            long stringsAddress = org.lwjgl.system.APIUtil.apiArray(stack, MemoryUtil::memUTF8, strings);
-            int __result = nglCreateShaderProgramv(type, strings.length, stringsAddress);
-            org.lwjgl.system.APIUtil.apiArrayFree(stringsAddress, strings.length);
-            return __result;
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glCreateShaderProgramv(type, strings);
     }
 
     /**
@@ -451,15 +444,7 @@ public class GL41 {
      */
     @NativeType("GLuint")
     public static int glCreateShaderProgramv(@NativeType("GLenum") int type, @NativeType("GLchar const **") CharSequence string) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            long stringsAddress = org.lwjgl.system.APIUtil.apiArray(stack, MemoryUtil::memUTF8, string);
-            int __result = nglCreateShaderProgramv(type, 1, stringsAddress);
-            org.lwjgl.system.APIUtil.apiArrayFree(stringsAddress, 1);
-            return __result;
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glCreateShaderProgramv(type, string);
     }
 
     // --- [ glBindProgramPipeline ] ---
@@ -471,7 +456,9 @@ public class GL41 {
      *
      * @param pipeline the name of the pipeline object to bind to the context
      */
-    public static native void glBindProgramPipeline(@NativeType("GLuint") int pipeline);
+    public static void glBindProgramPipeline(@NativeType("GLuint") int pipeline) {
+        GL41C.glBindProgramPipeline(pipeline);
+    }
 
     // --- [ glDeleteProgramPipelines ] ---
 
@@ -480,7 +467,9 @@ public class GL41 {
      *
      * @param n the number of program pipeline objects to delete
      */
-    public static native void nglDeleteProgramPipelines(int n, long pipelines);
+    public static void nglDeleteProgramPipelines(int n, long pipelines) {
+        GL41C.nglDeleteProgramPipelines(n, pipelines);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glDeleteProgramPipelines">Reference Page</a></p>
@@ -490,7 +479,7 @@ public class GL41 {
      * @param pipelines an array of names of program pipeline objects to delete
      */
     public static void glDeleteProgramPipelines(@NativeType("GLuint const *") IntBuffer pipelines) {
-        nglDeleteProgramPipelines(pipelines.remaining(), memAddress(pipelines));
+        GL41C.glDeleteProgramPipelines(pipelines);
     }
 
     /**
@@ -499,13 +488,7 @@ public class GL41 {
      * Deletes program pipeline objects.
      */
     public static void glDeleteProgramPipelines(@NativeType("GLuint const *") int pipeline) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer pipelines = stack.ints(pipeline);
-            nglDeleteProgramPipelines(1, memAddress(pipelines));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL41C.glDeleteProgramPipelines(pipeline);
     }
 
     // --- [ glGenProgramPipelines ] ---
@@ -515,7 +498,9 @@ public class GL41 {
      *
      * @param n the number of program pipeline object names to reserve
      */
-    public static native void nglGenProgramPipelines(int n, long pipelines);
+    public static void nglGenProgramPipelines(int n, long pipelines) {
+        GL41C.nglGenProgramPipelines(n, pipelines);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGenProgramPipelines">Reference Page</a></p>
@@ -525,7 +510,7 @@ public class GL41 {
      * @param pipelines an array of into which the reserved names will be written
      */
     public static void glGenProgramPipelines(@NativeType("GLuint *") IntBuffer pipelines) {
-        nglGenProgramPipelines(pipelines.remaining(), memAddress(pipelines));
+        GL41C.glGenProgramPipelines(pipelines);
     }
 
     /**
@@ -535,14 +520,7 @@ public class GL41 {
      */
     @NativeType("void")
     public static int glGenProgramPipelines() {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer pipelines = stack.callocInt(1);
-            nglGenProgramPipelines(1, memAddress(pipelines));
-            return pipelines.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGenProgramPipelines();
     }
 
     // --- [ glIsProgramPipeline ] ---
@@ -555,27 +533,15 @@ public class GL41 {
      * @param pipeline a value that may be the name of a program pipeline object
      */
     @NativeType("GLboolean")
-    public static native boolean glIsProgramPipeline(@NativeType("GLuint") int pipeline);
+    public static boolean glIsProgramPipeline(@NativeType("GLuint") int pipeline) {
+        return GL41C.glIsProgramPipeline(pipeline);
+    }
 
     // --- [ glGetProgramPipelineiv ] ---
 
     /** Unsafe version of: {@link #glGetProgramPipelineiv GetProgramPipelineiv} */
-    public static native void nglGetProgramPipelineiv(int pipeline, int pname, long params);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glGetProgramPipeline">Reference Page</a></p>
-     * 
-     * Retrieves properties of a program pipeline object.
-     *
-     * @param pipeline the name of a program pipeline object whose parameter retrieve
-     * @param pname    the name of the parameter to retrieve. One of:<br><table><tr><td>{@link #GL_ACTIVE_PROGRAM ACTIVE_PROGRAM}</td><td>{@link GL20#GL_INFO_LOG_LENGTH INFO_LOG_LENGTH}</td><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td></tr><tr><td>{@link GL40#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td><td>{@link GL40#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param params   a variable into which will be written the value or values of {@code pname} for {@code pipeline}
-     */
-    public static void glGetProgramPipelineiv(@NativeType("GLuint") int pipeline, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetProgramPipelineiv(pipeline, pname, memAddress(params));
+    public static void nglGetProgramPipelineiv(int pipeline, int pname, long params) {
+        GL41C.nglGetProgramPipelineiv(pipeline, pname, params);
     }
 
     /**
@@ -584,18 +550,24 @@ public class GL41 {
      * Retrieves properties of a program pipeline object.
      *
      * @param pipeline the name of a program pipeline object whose parameter retrieve
-     * @param pname    the name of the parameter to retrieve. One of:<br><table><tr><td>{@link #GL_ACTIVE_PROGRAM ACTIVE_PROGRAM}</td><td>{@link GL20#GL_INFO_LOG_LENGTH INFO_LOG_LENGTH}</td><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td></tr><tr><td>{@link GL40#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td><td>{@link GL40#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param pname    the name of the parameter to retrieve. One of:<br><table><tr><td>{@link GL41C#GL_ACTIVE_PROGRAM ACTIVE_PROGRAM}</td><td>{@link GL20#GL_INFO_LOG_LENGTH INFO_LOG_LENGTH}</td><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td></tr><tr><td>{@link GL40#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td><td>{@link GL40#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param params   a variable into which will be written the value or values of {@code pname} for {@code pipeline}
+     */
+    public static void glGetProgramPipelineiv(@NativeType("GLuint") int pipeline, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
+        GL41C.glGetProgramPipelineiv(pipeline, pname, params);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glGetProgramPipeline">Reference Page</a></p>
+     * 
+     * Retrieves properties of a program pipeline object.
+     *
+     * @param pipeline the name of a program pipeline object whose parameter retrieve
+     * @param pname    the name of the parameter to retrieve. One of:<br><table><tr><td>{@link GL41C#GL_ACTIVE_PROGRAM ACTIVE_PROGRAM}</td><td>{@link GL20#GL_INFO_LOG_LENGTH INFO_LOG_LENGTH}</td><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td></tr><tr><td>{@link GL40#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td><td>{@link GL40#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      */
     @NativeType("void")
     public static int glGetProgramPipelinei(@NativeType("GLuint") int pipeline, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer params = stack.callocInt(1);
-            nglGetProgramPipelineiv(pipeline, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetProgramPipelinei(pipeline, pname);
     }
 
     // --- [ glProgramUniform1i ] ---
@@ -609,7 +581,9 @@ public class GL41 {
      * @param location the location of the uniform variable to be modified
      * @param x        the uniform x value
      */
-    public static native void glProgramUniform1i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x);
+    public static void glProgramUniform1i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x) {
+        GL41C.glProgramUniform1i(program, location, x);
+    }
 
     // --- [ glProgramUniform2i ] ---
 
@@ -623,7 +597,9 @@ public class GL41 {
      * @param x        the uniform x value
      * @param y        the uniform y value
      */
-    public static native void glProgramUniform2i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x, @NativeType("GLint") int y);
+    public static void glProgramUniform2i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x, @NativeType("GLint") int y) {
+        GL41C.glProgramUniform2i(program, location, x, y);
+    }
 
     // --- [ glProgramUniform3i ] ---
 
@@ -638,7 +614,9 @@ public class GL41 {
      * @param y        the uniform y value
      * @param z        the uniform z value
      */
-    public static native void glProgramUniform3i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z);
+    public static void glProgramUniform3i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z) {
+        GL41C.glProgramUniform3i(program, location, x, y, z);
+    }
 
     // --- [ glProgramUniform4i ] ---
 
@@ -654,7 +632,9 @@ public class GL41 {
      * @param z        the uniform z value
      * @param w        the uniform w value
      */
-    public static native void glProgramUniform4i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z, @NativeType("GLint") int w);
+    public static void glProgramUniform4i(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint") int x, @NativeType("GLint") int y, @NativeType("GLint") int z, @NativeType("GLint") int w) {
+        GL41C.glProgramUniform4i(program, location, x, y, z, w);
+    }
 
     // --- [ glProgramUniform1ui ] ---
 
@@ -667,7 +647,9 @@ public class GL41 {
      * @param location the location of the uniform variable to be modified
      * @param x        the uniform x value
      */
-    public static native void glProgramUniform1ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x);
+    public static void glProgramUniform1ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x) {
+        GL41C.glProgramUniform1ui(program, location, x);
+    }
 
     // --- [ glProgramUniform2ui ] ---
 
@@ -681,7 +663,9 @@ public class GL41 {
      * @param x        the uniform x value
      * @param y        the uniform y value
      */
-    public static native void glProgramUniform2ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x, @NativeType("GLuint") int y);
+    public static void glProgramUniform2ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x, @NativeType("GLuint") int y) {
+        GL41C.glProgramUniform2ui(program, location, x, y);
+    }
 
     // --- [ glProgramUniform3ui ] ---
 
@@ -696,7 +680,9 @@ public class GL41 {
      * @param y        the uniform y value
      * @param z        the uniform z value
      */
-    public static native void glProgramUniform3ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x, @NativeType("GLuint") int y, @NativeType("GLuint") int z);
+    public static void glProgramUniform3ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x, @NativeType("GLuint") int y, @NativeType("GLuint") int z) {
+        GL41C.glProgramUniform3ui(program, location, x, y, z);
+    }
 
     // --- [ glProgramUniform4ui ] ---
 
@@ -712,7 +698,9 @@ public class GL41 {
      * @param z        the uniform z value
      * @param w        the uniform w value
      */
-    public static native void glProgramUniform4ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x, @NativeType("GLuint") int y, @NativeType("GLuint") int z, @NativeType("GLuint") int w);
+    public static void glProgramUniform4ui(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint") int x, @NativeType("GLuint") int y, @NativeType("GLuint") int z, @NativeType("GLuint") int w) {
+        GL41C.glProgramUniform4ui(program, location, x, y, z, w);
+    }
 
     // --- [ glProgramUniform1f ] ---
 
@@ -725,7 +713,9 @@ public class GL41 {
      * @param location the location of the uniform variable to be modified
      * @param x        the uniform x value
      */
-    public static native void glProgramUniform1f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x);
+    public static void glProgramUniform1f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x) {
+        GL41C.glProgramUniform1f(program, location, x);
+    }
 
     // --- [ glProgramUniform2f ] ---
 
@@ -739,7 +729,9 @@ public class GL41 {
      * @param x        the uniform x value
      * @param y        the uniform y value
      */
-    public static native void glProgramUniform2f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y);
+    public static void glProgramUniform2f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y) {
+        GL41C.glProgramUniform2f(program, location, x, y);
+    }
 
     // --- [ glProgramUniform3f ] ---
 
@@ -754,7 +746,9 @@ public class GL41 {
      * @param y        the uniform y value
      * @param z        the uniform z value
      */
-    public static native void glProgramUniform3f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z);
+    public static void glProgramUniform3f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z) {
+        GL41C.glProgramUniform3f(program, location, x, y, z);
+    }
 
     // --- [ glProgramUniform4f ] ---
 
@@ -770,7 +764,9 @@ public class GL41 {
      * @param z        the uniform z value
      * @param w        the uniform w value
      */
-    public static native void glProgramUniform4f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z, @NativeType("GLfloat") float w);
+    public static void glProgramUniform4f(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float z, @NativeType("GLfloat") float w) {
+        GL41C.glProgramUniform4f(program, location, x, y, z, w);
+    }
 
     // --- [ glProgramUniform1d ] ---
 
@@ -783,7 +779,9 @@ public class GL41 {
      * @param location the location of the uniform variable to be modified
      * @param x        the uniform x value
      */
-    public static native void glProgramUniform1d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x);
+    public static void glProgramUniform1d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x) {
+        GL41C.glProgramUniform1d(program, location, x);
+    }
 
     // --- [ glProgramUniform2d ] ---
 
@@ -797,7 +795,9 @@ public class GL41 {
      * @param x        the uniform x value
      * @param y        the uniform y value
      */
-    public static native void glProgramUniform2d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y);
+    public static void glProgramUniform2d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y) {
+        GL41C.glProgramUniform2d(program, location, x, y);
+    }
 
     // --- [ glProgramUniform3d ] ---
 
@@ -812,7 +812,9 @@ public class GL41 {
      * @param y        the uniform y value
      * @param z        the uniform z value
      */
-    public static native void glProgramUniform3d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
+    public static void glProgramUniform3d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z) {
+        GL41C.glProgramUniform3d(program, location, x, y, z);
+    }
 
     // --- [ glProgramUniform4d ] ---
 
@@ -828,7 +830,9 @@ public class GL41 {
      * @param z        the uniform z value
      * @param w        the uniform w value
      */
-    public static native void glProgramUniform4d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w);
+    public static void glProgramUniform4d(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w) {
+        GL41C.glProgramUniform4d(program, location, x, y, z, w);
+    }
 
     // --- [ glProgramUniform1iv ] ---
 
@@ -837,7 +841,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform1iv(int program, int location, int count, long value);
+    public static void nglProgramUniform1iv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform1iv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -849,7 +855,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform1iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") IntBuffer value) {
-        nglProgramUniform1iv(program, location, value.remaining(), memAddress(value));
+        GL41C.glProgramUniform1iv(program, location, value);
     }
 
     // --- [ glProgramUniform2iv ] ---
@@ -859,7 +865,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform2iv(int program, int location, int count, long value);
+    public static void nglProgramUniform2iv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform2iv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -871,7 +879,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform2iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") IntBuffer value) {
-        nglProgramUniform2iv(program, location, value.remaining() >> 1, memAddress(value));
+        GL41C.glProgramUniform2iv(program, location, value);
     }
 
     // --- [ glProgramUniform3iv ] ---
@@ -881,7 +889,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform3iv(int program, int location, int count, long value);
+    public static void nglProgramUniform3iv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform3iv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -893,7 +903,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform3iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") IntBuffer value) {
-        nglProgramUniform3iv(program, location, value.remaining() / 3, memAddress(value));
+        GL41C.glProgramUniform3iv(program, location, value);
     }
 
     // --- [ glProgramUniform4iv ] ---
@@ -903,7 +913,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform4iv(int program, int location, int count, long value);
+    public static void nglProgramUniform4iv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform4iv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -915,7 +927,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform4iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") IntBuffer value) {
-        nglProgramUniform4iv(program, location, value.remaining() >> 2, memAddress(value));
+        GL41C.glProgramUniform4iv(program, location, value);
     }
 
     // --- [ glProgramUniform1uiv ] ---
@@ -925,7 +937,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform1uiv(int program, int location, int count, long value);
+    public static void nglProgramUniform1uiv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform1uiv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -937,7 +951,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform1uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") IntBuffer value) {
-        nglProgramUniform1uiv(program, location, value.remaining(), memAddress(value));
+        GL41C.glProgramUniform1uiv(program, location, value);
     }
 
     // --- [ glProgramUniform2uiv ] ---
@@ -947,7 +961,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform2uiv(int program, int location, int count, long value);
+    public static void nglProgramUniform2uiv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform2uiv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -959,7 +975,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform2uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") IntBuffer value) {
-        nglProgramUniform2uiv(program, location, value.remaining() >> 1, memAddress(value));
+        GL41C.glProgramUniform2uiv(program, location, value);
     }
 
     // --- [ glProgramUniform3uiv ] ---
@@ -969,7 +985,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform3uiv(int program, int location, int count, long value);
+    public static void nglProgramUniform3uiv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform3uiv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -981,7 +999,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform3uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") IntBuffer value) {
-        nglProgramUniform3uiv(program, location, value.remaining() / 3, memAddress(value));
+        GL41C.glProgramUniform3uiv(program, location, value);
     }
 
     // --- [ glProgramUniform4uiv ] ---
@@ -991,7 +1009,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform4uiv(int program, int location, int count, long value);
+    public static void nglProgramUniform4uiv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform4uiv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1003,7 +1023,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform4uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") IntBuffer value) {
-        nglProgramUniform4uiv(program, location, value.remaining() >> 2, memAddress(value));
+        GL41C.glProgramUniform4uiv(program, location, value);
     }
 
     // --- [ glProgramUniform1fv ] ---
@@ -1013,7 +1033,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform1fv(int program, int location, int count, long value);
+    public static void nglProgramUniform1fv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform1fv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1025,7 +1047,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform1fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniform1fv(program, location, value.remaining(), memAddress(value));
+        GL41C.glProgramUniform1fv(program, location, value);
     }
 
     // --- [ glProgramUniform2fv ] ---
@@ -1035,7 +1057,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform2fv(int program, int location, int count, long value);
+    public static void nglProgramUniform2fv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform2fv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1047,7 +1071,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniform2fv(program, location, value.remaining() >> 1, memAddress(value));
+        GL41C.glProgramUniform2fv(program, location, value);
     }
 
     // --- [ glProgramUniform3fv ] ---
@@ -1057,7 +1081,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform3fv(int program, int location, int count, long value);
+    public static void nglProgramUniform3fv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform3fv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1069,7 +1095,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniform3fv(program, location, value.remaining() / 3, memAddress(value));
+        GL41C.glProgramUniform3fv(program, location, value);
     }
 
     // --- [ glProgramUniform4fv ] ---
@@ -1079,7 +1105,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform4fv(int program, int location, int count, long value);
+    public static void nglProgramUniform4fv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform4fv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1091,7 +1119,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniform4fv(program, location, value.remaining() >> 2, memAddress(value));
+        GL41C.glProgramUniform4fv(program, location, value);
     }
 
     // --- [ glProgramUniform1dv ] ---
@@ -1101,7 +1129,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform1dv(int program, int location, int count, long value);
+    public static void nglProgramUniform1dv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform1dv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1113,7 +1143,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform1dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniform1dv(program, location, value.remaining(), memAddress(value));
+        GL41C.glProgramUniform1dv(program, location, value);
     }
 
     // --- [ glProgramUniform2dv ] ---
@@ -1123,7 +1153,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform2dv(int program, int location, int count, long value);
+    public static void nglProgramUniform2dv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform2dv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1135,7 +1167,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniform2dv(program, location, value.remaining() >> 1, memAddress(value));
+        GL41C.glProgramUniform2dv(program, location, value);
     }
 
     // --- [ glProgramUniform3dv ] ---
@@ -1145,7 +1177,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform3dv(int program, int location, int count, long value);
+    public static void nglProgramUniform3dv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform3dv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1157,7 +1191,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniform3dv(program, location, value.remaining() / 3, memAddress(value));
+        GL41C.glProgramUniform3dv(program, location, value);
     }
 
     // --- [ glProgramUniform4dv ] ---
@@ -1167,7 +1201,9 @@ public class GL41 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglProgramUniform4dv(int program, int location, int count, long value);
+    public static void nglProgramUniform4dv(int program, int location, int count, long value) {
+        GL41C.nglProgramUniform4dv(program, location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1179,7 +1215,7 @@ public class GL41 {
      * @param value    an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glProgramUniform4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniform4dv(program, location, value.remaining() >> 2, memAddress(value));
+        GL41C.glProgramUniform4dv(program, location, value);
     }
 
     // --- [ glProgramUniformMatrix2fv ] ---
@@ -1189,7 +1225,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix2fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix2fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix2fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1202,7 +1240,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix2fv(program, location, value.remaining() >> 2, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix2fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix3fv ] ---
@@ -1212,7 +1250,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix3fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix3fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix3fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1225,7 +1265,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix3fv(program, location, value.remaining() / 9, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix3fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix4fv ] ---
@@ -1235,7 +1275,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix4fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix4fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix4fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1248,7 +1290,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix4fv(program, location, value.remaining() >> 4, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix4fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix2dv ] ---
@@ -1258,7 +1300,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix2dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix2dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix2dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1271,7 +1315,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix2dv(program, location, value.remaining() >> 2, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix2dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix3dv ] ---
@@ -1281,7 +1325,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix3dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix3dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix3dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1294,7 +1340,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix3dv(program, location, value.remaining() / 9, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix3dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix4dv ] ---
@@ -1304,7 +1350,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix4dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix4dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix4dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1317,7 +1365,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix4dv(program, location, value.remaining() >> 4, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix4dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix2x3fv ] ---
@@ -1327,7 +1375,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix2x3fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix2x3fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix2x3fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1340,7 +1390,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix2x3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix2x3fv(program, location, value.remaining() / 6, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix2x3fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix3x2fv ] ---
@@ -1350,7 +1400,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix3x2fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix3x2fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix3x2fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1363,7 +1415,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix3x2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix3x2fv(program, location, value.remaining() / 6, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix3x2fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix2x4fv ] ---
@@ -1373,7 +1425,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix2x4fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix2x4fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix2x4fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1386,7 +1440,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix2x4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix2x4fv(program, location, value.remaining() >> 3, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix2x4fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix4x2fv ] ---
@@ -1396,7 +1450,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix4x2fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix4x2fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix4x2fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1409,7 +1465,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix4x2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix4x2fv(program, location, value.remaining() >> 3, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix4x2fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix3x4fv ] ---
@@ -1419,7 +1475,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix3x4fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix3x4fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix3x4fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1432,7 +1490,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix3x4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix3x4fv(program, location, value.remaining() / 12, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix3x4fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix4x3fv ] ---
@@ -1442,7 +1500,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix4x3fv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix4x3fv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix4x3fv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1455,7 +1515,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix4x3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") FloatBuffer value) {
-        nglProgramUniformMatrix4x3fv(program, location, value.remaining() / 12, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix4x3fv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix2x3dv ] ---
@@ -1465,7 +1525,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix2x3dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix2x3dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix2x3dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1478,7 +1540,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix2x3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix2x3dv(program, location, value.remaining() / 6, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix2x3dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix3x2dv ] ---
@@ -1488,7 +1550,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix3x2dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix3x2dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix3x2dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1501,7 +1565,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix3x2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix3x2dv(program, location, value.remaining() / 6, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix3x2dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix2x4dv ] ---
@@ -1511,7 +1575,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix2x4dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix2x4dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix2x4dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1524,7 +1590,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix2x4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix2x4dv(program, location, value.remaining() >> 3, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix2x4dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix4x2dv ] ---
@@ -1534,7 +1600,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix4x2dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix4x2dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix4x2dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1547,7 +1615,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix4x2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix4x2dv(program, location, value.remaining() >> 3, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix4x2dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix3x4dv ] ---
@@ -1557,7 +1625,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix3x4dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix3x4dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix3x4dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1570,7 +1640,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix3x4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix3x4dv(program, location, value.remaining() / 12, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix3x4dv(program, location, transpose, value);
     }
 
     // --- [ glProgramUniformMatrix4x3dv ] ---
@@ -1580,7 +1650,9 @@ public class GL41 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglProgramUniformMatrix4x3dv(int program, int location, int count, boolean transpose, long value);
+    public static void nglProgramUniformMatrix4x3dv(int program, int location, int count, boolean transpose, long value) {
+        GL41C.nglProgramUniformMatrix4x3dv(program, location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glProgramUniform">Reference Page</a></p>
@@ -1593,7 +1665,7 @@ public class GL41 {
      * @param value     an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glProgramUniformMatrix4x3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglProgramUniformMatrix4x3dv(program, location, value.remaining() / 12, transpose, memAddress(value));
+        GL41C.glProgramUniformMatrix4x3dv(program, location, transpose, value);
     }
 
     // --- [ glValidateProgramPipeline ] ---
@@ -1605,7 +1677,9 @@ public class GL41 {
      *
      * @param pipeline the name of a program pipeline object to validate
      */
-    public static native void glValidateProgramPipeline(@NativeType("GLuint") int pipeline);
+    public static void glValidateProgramPipeline(@NativeType("GLuint") int pipeline) {
+        GL41C.glValidateProgramPipeline(pipeline);
+    }
 
     // --- [ glGetProgramPipelineInfoLog ] ---
 
@@ -1614,7 +1688,9 @@ public class GL41 {
      *
      * @param bufSize the maximum number of characters, including the null terminator, that may be written into {@code infoLog}
      */
-    public static native void nglGetProgramPipelineInfoLog(int pipeline, int bufSize, long length, long infoLog);
+    public static void nglGetProgramPipelineInfoLog(int pipeline, int bufSize, long length, long infoLog) {
+        GL41C.nglGetProgramPipelineInfoLog(pipeline, bufSize, length, infoLog);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetProgramPipelineInfoLog">Reference Page</a></p>
@@ -1626,10 +1702,7 @@ public class GL41 {
      * @param infoLog  an array of characters into which will be written the info log for {@code pipeline}
      */
     public static void glGetProgramPipelineInfoLog(@NativeType("GLuint") int pipeline, @Nullable @NativeType("GLsizei *") IntBuffer length, @NativeType("GLchar *") ByteBuffer infoLog) {
-        if (CHECKS) {
-            checkSafe(length, 1);
-        }
-        nglGetProgramPipelineInfoLog(pipeline, infoLog.remaining(), memAddressSafe(length), memAddress(infoLog));
+        GL41C.glGetProgramPipelineInfoLog(pipeline, length, infoLog);
     }
 
     /**
@@ -1642,16 +1715,7 @@ public class GL41 {
      */
     @NativeType("void")
     public static String glGetProgramPipelineInfoLog(@NativeType("GLuint") int pipeline, @NativeType("GLsizei") int bufSize) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        ByteBuffer infoLog = memAlloc(bufSize);
-        try {
-            IntBuffer length = stack.ints(0);
-            nglGetProgramPipelineInfoLog(pipeline, bufSize, memAddress(length), memAddress(infoLog));
-            return memUTF8(infoLog, length.get(0));
-        } finally {
-            memFree(infoLog);
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetProgramPipelineInfoLog(pipeline, bufSize);
     }
 
     /**
@@ -1676,7 +1740,9 @@ public class GL41 {
      * @param index the index of the generic vertex attribute to be modified
      * @param x     the vertex attribute x component
      */
-    public static native void glVertexAttribL1d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x);
+    public static void glVertexAttribL1d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x) {
+        GL41C.glVertexAttribL1d(index, x);
+    }
 
     // --- [ glVertexAttribL2d ] ---
 
@@ -1689,7 +1755,9 @@ public class GL41 {
      * @param x     the vertex attribute x component
      * @param y     the vertex attribute y component
      */
-    public static native void glVertexAttribL2d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y);
+    public static void glVertexAttribL2d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y) {
+        GL41C.glVertexAttribL2d(index, x, y);
+    }
 
     // --- [ glVertexAttribL3d ] ---
 
@@ -1703,7 +1771,9 @@ public class GL41 {
      * @param y     the vertex attribute y component
      * @param z     the vertex attribute z component
      */
-    public static native void glVertexAttribL3d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
+    public static void glVertexAttribL3d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z) {
+        GL41C.glVertexAttribL3d(index, x, y, z);
+    }
 
     // --- [ glVertexAttribL4d ] ---
 
@@ -1718,12 +1788,16 @@ public class GL41 {
      * @param z     the vertex attribute z component
      * @param w     the vertex attribute w component
      */
-    public static native void glVertexAttribL4d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w);
+    public static void glVertexAttribL4d(@NativeType("GLuint") int index, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w) {
+        GL41C.glVertexAttribL4d(index, x, y, z, w);
+    }
 
     // --- [ glVertexAttribL1dv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribL1dv VertexAttribL1dv} */
-    public static native void nglVertexAttribL1dv(int index, long v);
+    public static void nglVertexAttribL1dv(int index, long v) {
+        GL41C.nglVertexAttribL1dv(index, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1734,16 +1808,15 @@ public class GL41 {
      * @param v     the vertex attribute buffer
      */
     public static void glVertexAttribL1dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") DoubleBuffer v) {
-        if (CHECKS) {
-            check(v, 1);
-        }
-        nglVertexAttribL1dv(index, memAddress(v));
+        GL41C.glVertexAttribL1dv(index, v);
     }
 
     // --- [ glVertexAttribL2dv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribL2dv VertexAttribL2dv} */
-    public static native void nglVertexAttribL2dv(int index, long v);
+    public static void nglVertexAttribL2dv(int index, long v) {
+        GL41C.nglVertexAttribL2dv(index, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1754,16 +1827,15 @@ public class GL41 {
      * @param v     the vertex attribute buffer
      */
     public static void glVertexAttribL2dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") DoubleBuffer v) {
-        if (CHECKS) {
-            check(v, 2);
-        }
-        nglVertexAttribL2dv(index, memAddress(v));
+        GL41C.glVertexAttribL2dv(index, v);
     }
 
     // --- [ glVertexAttribL3dv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribL3dv VertexAttribL3dv} */
-    public static native void nglVertexAttribL3dv(int index, long v);
+    public static void nglVertexAttribL3dv(int index, long v) {
+        GL41C.nglVertexAttribL3dv(index, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1774,16 +1846,15 @@ public class GL41 {
      * @param v     the vertex attribute buffer
      */
     public static void glVertexAttribL3dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") DoubleBuffer v) {
-        if (CHECKS) {
-            check(v, 3);
-        }
-        nglVertexAttribL3dv(index, memAddress(v));
+        GL41C.glVertexAttribL3dv(index, v);
     }
 
     // --- [ glVertexAttribL4dv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribL4dv VertexAttribL4dv} */
-    public static native void nglVertexAttribL4dv(int index, long v);
+    public static void nglVertexAttribL4dv(int index, long v) {
+        GL41C.nglVertexAttribL4dv(index, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1794,10 +1865,7 @@ public class GL41 {
      * @param v     the vertex attribute buffer
      */
     public static void glVertexAttribL4dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") DoubleBuffer v) {
-        if (CHECKS) {
-            check(v, 4);
-        }
-        nglVertexAttribL4dv(index, memAddress(v));
+        GL41C.glVertexAttribL4dv(index, v);
     }
 
     // --- [ glVertexAttribLPointer ] ---
@@ -1807,7 +1875,9 @@ public class GL41 {
      *
      * @param type the data type of each component in the array. Must be:<br><table><tr><td>{@link GL11#GL_DOUBLE DOUBLE}</td></tr></table>
      */
-    public static native void nglVertexAttribLPointer(int index, int size, int type, int stride, long pointer);
+    public static void nglVertexAttribLPointer(int index, int size, int type, int stride, long pointer) {
+        GL41C.nglVertexAttribLPointer(index, size, type, stride, pointer);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttribLPointer">Reference Page</a></p>
@@ -1823,7 +1893,7 @@ public class GL41 {
      *                currently bound to the {@link GL15#GL_ARRAY_BUFFER ARRAY_BUFFER} target. The initial value is 0.
      */
     public static void glVertexAttribLPointer(@NativeType("GLuint") int index, @NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") ByteBuffer pointer) {
-        nglVertexAttribLPointer(index, size, type, stride, memAddress(pointer));
+        GL41C.glVertexAttribLPointer(index, size, type, stride, pointer);
     }
 
     /**
@@ -1840,7 +1910,7 @@ public class GL41 {
      *                currently bound to the {@link GL15#GL_ARRAY_BUFFER ARRAY_BUFFER} target. The initial value is 0.
      */
     public static void glVertexAttribLPointer(@NativeType("GLuint") int index, @NativeType("GLint") int size, @NativeType("GLenum") int type, @NativeType("GLsizei") int stride, @NativeType("void const *") long pointer) {
-        nglVertexAttribLPointer(index, size, type, stride, pointer);
+        GL41C.glVertexAttribLPointer(index, size, type, stride, pointer);
     }
 
     /**
@@ -1856,28 +1926,27 @@ public class GL41 {
      *                currently bound to the {@link GL15#GL_ARRAY_BUFFER ARRAY_BUFFER} target. The initial value is 0.
      */
     public static void glVertexAttribLPointer(@NativeType("GLuint") int index, @NativeType("GLint") int size, @NativeType("GLsizei") int stride, @NativeType("void const *") DoubleBuffer pointer) {
-        nglVertexAttribLPointer(index, size, GL11.GL_DOUBLE, stride, memAddress(pointer));
+        GL41C.glVertexAttribLPointer(index, size, stride, pointer);
     }
 
     // --- [ glGetVertexAttribLdv ] ---
 
     /** Unsafe version of: {@link #glGetVertexAttribLdv GetVertexAttribLdv} */
-    public static native void nglGetVertexAttribLdv(int index, int pname, long params);
+    public static void nglGetVertexAttribLdv(int index, int pname, long params) {
+        GL41C.nglGetVertexAttribLdv(index, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetVertexAttrib">Reference Page</a></p>
      * 
-     * Double version of {@link GL20#glGetVertexAttribiv GetVertexAttribiv}.
+     * Double version of {@link GL20C#glGetVertexAttribiv GetVertexAttribiv}.
      *
      * @param index  the generic vertex attribute parameter to be queried
      * @param pname  the symbolic name of the vertex attribute parameter to be queried
      * @param params the requested data
      */
     public static void glGetVertexAttribLdv(@NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLdouble *") DoubleBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetVertexAttribLdv(index, pname, memAddress(params));
+        GL41C.glGetVertexAttribLdv(index, pname, params);
     }
 
     // --- [ glViewportArrayv ] ---
@@ -1887,7 +1956,9 @@ public class GL41 {
      *
      * @param count the number of viewports to set
      */
-    public static native void nglViewportArrayv(int first, int count, long v);
+    public static void nglViewportArrayv(int first, int count, long v) {
+        GL41C.nglViewportArrayv(first, count, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glViewportArrayv">Reference Page</a></p>
@@ -1898,7 +1969,7 @@ public class GL41 {
      * @param v     an array containing the viewport parameters
      */
     public static void glViewportArrayv(@NativeType("GLuint") int first, @NativeType("GLfloat const *") FloatBuffer v) {
-        nglViewportArrayv(first, v.remaining() >> 2, memAddress(v));
+        GL41C.glViewportArrayv(first, v);
     }
 
     // --- [ glViewportIndexedf ] ---
@@ -1914,12 +1985,16 @@ public class GL41 {
      * @param w     the viewport width
      * @param h     the viewport height
      */
-    public static native void glViewportIndexedf(@NativeType("GLuint") int index, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float w, @NativeType("GLfloat") float h);
+    public static void glViewportIndexedf(@NativeType("GLuint") int index, @NativeType("GLfloat") float x, @NativeType("GLfloat") float y, @NativeType("GLfloat") float w, @NativeType("GLfloat") float h) {
+        GL41C.glViewportIndexedf(index, x, y, w, h);
+    }
 
     // --- [ glViewportIndexedfv ] ---
 
     /** Unsafe version of: {@link #glViewportIndexedfv ViewportIndexedfv} */
-    public static native void nglViewportIndexedfv(int index, long v);
+    public static void nglViewportIndexedfv(int index, long v) {
+        GL41C.nglViewportIndexedfv(index, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glViewportIndexed">Reference Page</a></p>
@@ -1930,10 +2005,7 @@ public class GL41 {
      * @param v     the viewport parameters
      */
     public static void glViewportIndexedfv(@NativeType("GLuint") int index, @NativeType("GLfloat const *") FloatBuffer v) {
-        if (CHECKS) {
-            check(v, 4);
-        }
-        nglViewportIndexedfv(index, memAddress(v));
+        GL41C.glViewportIndexedfv(index, v);
     }
 
     // --- [ glScissorArrayv ] ---
@@ -1943,7 +2015,9 @@ public class GL41 {
      *
      * @param count the number of scissor boxes to modify
      */
-    public static native void nglScissorArrayv(int first, int count, long v);
+    public static void nglScissorArrayv(int first, int count, long v) {
+        GL41C.nglScissorArrayv(first, count, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glScissorArrayv">Reference Page</a></p>
@@ -1954,7 +2028,7 @@ public class GL41 {
      * @param v     an array containing the left, bottom, width and height of each scissor box, in that order
      */
     public static void glScissorArrayv(@NativeType("GLuint") int first, @NativeType("GLint const *") IntBuffer v) {
-        nglScissorArrayv(first, v.remaining() >> 2, memAddress(v));
+        GL41C.glScissorArrayv(first, v);
     }
 
     // --- [ glScissorIndexed ] ---
@@ -1970,12 +2044,16 @@ public class GL41 {
      * @param width  the scissor box width
      * @param height the scissor box height
      */
-    public static native void glScissorIndexed(@NativeType("GLuint") int index, @NativeType("GLint") int left, @NativeType("GLint") int bottom, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height);
+    public static void glScissorIndexed(@NativeType("GLuint") int index, @NativeType("GLint") int left, @NativeType("GLint") int bottom, @NativeType("GLsizei") int width, @NativeType("GLsizei") int height) {
+        GL41C.glScissorIndexed(index, left, bottom, width, height);
+    }
 
     // --- [ glScissorIndexedv ] ---
 
     /** Unsafe version of: {@link #glScissorIndexedv ScissorIndexedv} */
-    public static native void nglScissorIndexedv(int index, long v);
+    public static void nglScissorIndexedv(int index, long v) {
+        GL41C.nglScissorIndexedv(index, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glScissorIndexed">Reference Page</a></p>
@@ -1986,10 +2064,7 @@ public class GL41 {
      * @param v     an array containing the left, bottom, width and height of each scissor box, in that order
      */
     public static void glScissorIndexedv(@NativeType("GLuint") int index, @NativeType("GLint const *") IntBuffer v) {
-        if (CHECKS) {
-            check(v, 4);
-        }
-        nglScissorIndexedv(index, memAddress(v));
+        GL41C.glScissorIndexedv(index, v);
     }
 
     // --- [ glDepthRangeArrayv ] ---
@@ -1999,7 +2074,9 @@ public class GL41 {
      *
      * @param count the number of viewports whose depth range to update
      */
-    public static native void nglDepthRangeArrayv(int first, int count, long v);
+    public static void nglDepthRangeArrayv(int first, int count, long v) {
+        GL41C.nglDepthRangeArrayv(first, count, v);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glDepthRangeArrayv">Reference Page</a></p>
@@ -2010,7 +2087,7 @@ public class GL41 {
      * @param v     n array containing the near and far values for the depth range of each modified viewport
      */
     public static void glDepthRangeArrayv(@NativeType("GLuint") int first, @NativeType("GLdouble const *") DoubleBuffer v) {
-        nglDepthRangeArrayv(first, v.remaining() >> 1, memAddress(v));
+        GL41C.glDepthRangeArrayv(first, v);
     }
 
     // --- [ glDepthRangeIndexed ] ---
@@ -2024,12 +2101,16 @@ public class GL41 {
      * @param zNear the mapping of the near clipping plane to window coordinates. The initial value is 0.
      * @param zFar  the mapping of the far clipping plane to window coordinates. The initial value is 1.
      */
-    public static native void glDepthRangeIndexed(@NativeType("GLuint") int index, @NativeType("GLdouble") double zNear, @NativeType("GLdouble") double zFar);
+    public static void glDepthRangeIndexed(@NativeType("GLuint") int index, @NativeType("GLdouble") double zNear, @NativeType("GLdouble") double zFar) {
+        GL41C.glDepthRangeIndexed(index, zNear, zFar);
+    }
 
     // --- [ glGetFloati_v ] ---
 
     /** Unsafe version of: {@link #glGetFloati_v GetFloati_v} */
-    public static native void nglGetFloati_v(int target, int index, long data);
+    public static void nglGetFloati_v(int target, int index, long data) {
+        GL41C.nglGetFloati_v(target, index, data);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetFloati_v">Reference Page</a></p>
@@ -2041,10 +2122,7 @@ public class GL41 {
      * @param data   a scalar or buffer in which to place the returned data
      */
     public static void glGetFloati_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLfloat *") FloatBuffer data) {
-        if (CHECKS) {
-            check(data, 1);
-        }
-        nglGetFloati_v(target, index, memAddress(data));
+        GL41C.glGetFloati_v(target, index, data);
     }
 
     /**
@@ -2057,20 +2135,15 @@ public class GL41 {
      */
     @NativeType("void")
     public static float glGetFloati(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            FloatBuffer data = stack.callocFloat(1);
-            nglGetFloati_v(target, index, memAddress(data));
-            return data.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetFloati(target, index);
     }
 
     // --- [ glGetDoublei_v ] ---
 
     /** Unsafe version of: {@link #glGetDoublei_v GetDoublei_v} */
-    public static native void nglGetDoublei_v(int target, int index, long data);
+    public static void nglGetDoublei_v(int target, int index, long data) {
+        GL41C.nglGetDoublei_v(target, index, data);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetDoublei_v">Reference Page</a></p>
@@ -2082,10 +2155,7 @@ public class GL41 {
      * @param data   a scalar or buffer in which to place the returned data
      */
     public static void glGetDoublei_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLdouble *") DoubleBuffer data) {
-        if (CHECKS) {
-            check(data, 1);
-        }
-        nglGetDoublei_v(target, index, memAddress(data));
+        GL41C.glGetDoublei_v(target, index, data);
     }
 
     /**
@@ -2098,14 +2168,7 @@ public class GL41 {
      */
     @NativeType("void")
     public static double glGetDoublei(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            DoubleBuffer data = stack.callocDouble(1);
-            nglGetDoublei_v(target, index, memAddress(data));
-            return data.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL41C.glGetDoublei(target, index);
     }
 
     /**
@@ -2114,11 +2177,7 @@ public class GL41 {
      * Array version of: {@link #glShaderBinary ShaderBinary}
      */
     public static void glShaderBinary(@NativeType("GLuint const *") int[] shaders, @NativeType("GLenum") int binaryformat, @NativeType("void const *") ByteBuffer binary) {
-        long __functionAddress = GL.getICD().glShaderBinary;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPPV(__functionAddress, shaders.length, shaders, binaryformat, memAddress(binary), binary.remaining());
+        GL41C.glShaderBinary(shaders, binaryformat, binary);
     }
 
     /**
@@ -2127,13 +2186,7 @@ public class GL41 {
      * Array version of: {@link #glGetShaderPrecisionFormat GetShaderPrecisionFormat}
      */
     public static void glGetShaderPrecisionFormat(@NativeType("GLenum") int shadertype, @NativeType("GLenum") int precisiontype, @NativeType("GLint *") int[] range, @NativeType("GLint *") int[] precision) {
-        long __functionAddress = GL.getICD().glGetShaderPrecisionFormat;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(range, 2);
-            check(precision, 1);
-        }
-        callPPV(__functionAddress, shadertype, precisiontype, range, precision);
+        GL41C.glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
     }
 
     /**
@@ -2142,13 +2195,7 @@ public class GL41 {
      * Array version of: {@link #glGetProgramBinary GetProgramBinary}
      */
     public static void glGetProgramBinary(@NativeType("GLuint") int program, @Nullable @NativeType("GLsizei *") int[] length, @NativeType("GLenum *") int[] binaryFormat, @NativeType("void *") ByteBuffer binary) {
-        long __functionAddress = GL.getICD().glGetProgramBinary;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(length, 1);
-            check(binaryFormat, 1);
-        }
-        callPPPV(__functionAddress, program, binary.remaining(), length, binaryFormat, memAddress(binary));
+        GL41C.glGetProgramBinary(program, length, binaryFormat, binary);
     }
 
     /**
@@ -2157,11 +2204,7 @@ public class GL41 {
      * Array version of: {@link #glDeleteProgramPipelines DeleteProgramPipelines}
      */
     public static void glDeleteProgramPipelines(@NativeType("GLuint const *") int[] pipelines) {
-        long __functionAddress = GL.getICD().glDeleteProgramPipelines;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, pipelines.length, pipelines);
+        GL41C.glDeleteProgramPipelines(pipelines);
     }
 
     /**
@@ -2170,11 +2213,7 @@ public class GL41 {
      * Array version of: {@link #glGenProgramPipelines GenProgramPipelines}
      */
     public static void glGenProgramPipelines(@NativeType("GLuint *") int[] pipelines) {
-        long __functionAddress = GL.getICD().glGenProgramPipelines;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, pipelines.length, pipelines);
+        GL41C.glGenProgramPipelines(pipelines);
     }
 
     /**
@@ -2183,12 +2222,7 @@ public class GL41 {
      * Array version of: {@link #glGetProgramPipelineiv GetProgramPipelineiv}
      */
     public static void glGetProgramPipelineiv(@NativeType("GLuint") int pipeline, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
-        long __functionAddress = GL.getICD().glGetProgramPipelineiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, pipeline, pname, params);
+        GL41C.glGetProgramPipelineiv(pipeline, pname, params);
     }
 
     /**
@@ -2197,11 +2231,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform1iv ProgramUniform1iv}
      */
     public static void glProgramUniform1iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform1iv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length, value);
+        GL41C.glProgramUniform1iv(program, location, value);
     }
 
     /**
@@ -2210,11 +2240,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform2iv ProgramUniform2iv}
      */
     public static void glProgramUniform2iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform2iv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 1, value);
+        GL41C.glProgramUniform2iv(program, location, value);
     }
 
     /**
@@ -2223,11 +2249,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform3iv ProgramUniform3iv}
      */
     public static void glProgramUniform3iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform3iv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 3, value);
+        GL41C.glProgramUniform3iv(program, location, value);
     }
 
     /**
@@ -2236,11 +2258,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform4iv ProgramUniform4iv}
      */
     public static void glProgramUniform4iv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform4iv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 2, value);
+        GL41C.glProgramUniform4iv(program, location, value);
     }
 
     /**
@@ -2249,11 +2267,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform1uiv ProgramUniform1uiv}
      */
     public static void glProgramUniform1uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform1uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length, value);
+        GL41C.glProgramUniform1uiv(program, location, value);
     }
 
     /**
@@ -2262,11 +2276,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform2uiv ProgramUniform2uiv}
      */
     public static void glProgramUniform2uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform2uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 1, value);
+        GL41C.glProgramUniform2uiv(program, location, value);
     }
 
     /**
@@ -2275,11 +2285,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform3uiv ProgramUniform3uiv}
      */
     public static void glProgramUniform3uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform3uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 3, value);
+        GL41C.glProgramUniform3uiv(program, location, value);
     }
 
     /**
@@ -2288,11 +2294,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform4uiv ProgramUniform4uiv}
      */
     public static void glProgramUniform4uiv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform4uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 2, value);
+        GL41C.glProgramUniform4uiv(program, location, value);
     }
 
     /**
@@ -2301,11 +2303,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform1fv ProgramUniform1fv}
      */
     public static void glProgramUniform1fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform1fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length, value);
+        GL41C.glProgramUniform1fv(program, location, value);
     }
 
     /**
@@ -2314,11 +2312,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform2fv ProgramUniform2fv}
      */
     public static void glProgramUniform2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform2fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 1, value);
+        GL41C.glProgramUniform2fv(program, location, value);
     }
 
     /**
@@ -2327,11 +2321,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform3fv ProgramUniform3fv}
      */
     public static void glProgramUniform3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform3fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 3, value);
+        GL41C.glProgramUniform3fv(program, location, value);
     }
 
     /**
@@ -2340,11 +2330,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform4fv ProgramUniform4fv}
      */
     public static void glProgramUniform4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform4fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 2, value);
+        GL41C.glProgramUniform4fv(program, location, value);
     }
 
     /**
@@ -2353,11 +2339,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform1dv ProgramUniform1dv}
      */
     public static void glProgramUniform1dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform1dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length, value);
+        GL41C.glProgramUniform1dv(program, location, value);
     }
 
     /**
@@ -2366,11 +2348,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform2dv ProgramUniform2dv}
      */
     public static void glProgramUniform2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 1, value);
+        GL41C.glProgramUniform2dv(program, location, value);
     }
 
     /**
@@ -2379,11 +2357,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform3dv ProgramUniform3dv}
      */
     public static void glProgramUniform3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 3, value);
+        GL41C.glProgramUniform3dv(program, location, value);
     }
 
     /**
@@ -2392,11 +2366,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniform4dv ProgramUniform4dv}
      */
     public static void glProgramUniform4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniform4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 2, value);
+        GL41C.glProgramUniform4dv(program, location, value);
     }
 
     /**
@@ -2405,11 +2375,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix2fv ProgramUniformMatrix2fv}
      */
     public static void glProgramUniformMatrix2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix2fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 2, transpose, value);
+        GL41C.glProgramUniformMatrix2fv(program, location, transpose, value);
     }
 
     /**
@@ -2418,11 +2384,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix3fv ProgramUniformMatrix3fv}
      */
     public static void glProgramUniformMatrix3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix3fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 9, transpose, value);
+        GL41C.glProgramUniformMatrix3fv(program, location, transpose, value);
     }
 
     /**
@@ -2431,11 +2393,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix4fv ProgramUniformMatrix4fv}
      */
     public static void glProgramUniformMatrix4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix4fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 4, transpose, value);
+        GL41C.glProgramUniformMatrix4fv(program, location, transpose, value);
     }
 
     /**
@@ -2444,11 +2402,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix2dv ProgramUniformMatrix2dv}
      */
     public static void glProgramUniformMatrix2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 2, transpose, value);
+        GL41C.glProgramUniformMatrix2dv(program, location, transpose, value);
     }
 
     /**
@@ -2457,11 +2411,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix3dv ProgramUniformMatrix3dv}
      */
     public static void glProgramUniformMatrix3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 9, transpose, value);
+        GL41C.glProgramUniformMatrix3dv(program, location, transpose, value);
     }
 
     /**
@@ -2470,11 +2420,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix4dv ProgramUniformMatrix4dv}
      */
     public static void glProgramUniformMatrix4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 4, transpose, value);
+        GL41C.glProgramUniformMatrix4dv(program, location, transpose, value);
     }
 
     /**
@@ -2483,11 +2429,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix2x3fv ProgramUniformMatrix2x3fv}
      */
     public static void glProgramUniformMatrix2x3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix2x3fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 6, transpose, value);
+        GL41C.glProgramUniformMatrix2x3fv(program, location, transpose, value);
     }
 
     /**
@@ -2496,11 +2438,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix3x2fv ProgramUniformMatrix3x2fv}
      */
     public static void glProgramUniformMatrix3x2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix3x2fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 6, transpose, value);
+        GL41C.glProgramUniformMatrix3x2fv(program, location, transpose, value);
     }
 
     /**
@@ -2509,11 +2447,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix2x4fv ProgramUniformMatrix2x4fv}
      */
     public static void glProgramUniformMatrix2x4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix2x4fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 3, transpose, value);
+        GL41C.glProgramUniformMatrix2x4fv(program, location, transpose, value);
     }
 
     /**
@@ -2522,11 +2456,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix4x2fv ProgramUniformMatrix4x2fv}
      */
     public static void glProgramUniformMatrix4x2fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix4x2fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 3, transpose, value);
+        GL41C.glProgramUniformMatrix4x2fv(program, location, transpose, value);
     }
 
     /**
@@ -2535,11 +2465,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix3x4fv ProgramUniformMatrix3x4fv}
      */
     public static void glProgramUniformMatrix3x4fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix3x4fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 12, transpose, value);
+        GL41C.glProgramUniformMatrix3x4fv(program, location, transpose, value);
     }
 
     /**
@@ -2548,11 +2474,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix4x3fv ProgramUniformMatrix4x3fv}
      */
     public static void glProgramUniformMatrix4x3fv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLfloat const *") float[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix4x3fv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 12, transpose, value);
+        GL41C.glProgramUniformMatrix4x3fv(program, location, transpose, value);
     }
 
     /**
@@ -2561,11 +2483,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix2x3dv ProgramUniformMatrix2x3dv}
      */
     public static void glProgramUniformMatrix2x3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix2x3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 6, transpose, value);
+        GL41C.glProgramUniformMatrix2x3dv(program, location, transpose, value);
     }
 
     /**
@@ -2574,11 +2492,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix3x2dv ProgramUniformMatrix3x2dv}
      */
     public static void glProgramUniformMatrix3x2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix3x2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 6, transpose, value);
+        GL41C.glProgramUniformMatrix3x2dv(program, location, transpose, value);
     }
 
     /**
@@ -2587,11 +2501,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix2x4dv ProgramUniformMatrix2x4dv}
      */
     public static void glProgramUniformMatrix2x4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix2x4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 3, transpose, value);
+        GL41C.glProgramUniformMatrix2x4dv(program, location, transpose, value);
     }
 
     /**
@@ -2600,11 +2510,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix4x2dv ProgramUniformMatrix4x2dv}
      */
     public static void glProgramUniformMatrix4x2dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix4x2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length >> 3, transpose, value);
+        GL41C.glProgramUniformMatrix4x2dv(program, location, transpose, value);
     }
 
     /**
@@ -2613,11 +2519,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix3x4dv ProgramUniformMatrix3x4dv}
      */
     public static void glProgramUniformMatrix3x4dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix3x4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 12, transpose, value);
+        GL41C.glProgramUniformMatrix3x4dv(program, location, transpose, value);
     }
 
     /**
@@ -2626,11 +2528,7 @@ public class GL41 {
      * Array version of: {@link #glProgramUniformMatrix4x3dv ProgramUniformMatrix4x3dv}
      */
     public static void glProgramUniformMatrix4x3dv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glProgramUniformMatrix4x3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, program, location, value.length / 12, transpose, value);
+        GL41C.glProgramUniformMatrix4x3dv(program, location, transpose, value);
     }
 
     /**
@@ -2639,12 +2537,7 @@ public class GL41 {
      * Array version of: {@link #glGetProgramPipelineInfoLog GetProgramPipelineInfoLog}
      */
     public static void glGetProgramPipelineInfoLog(@NativeType("GLuint") int pipeline, @Nullable @NativeType("GLsizei *") int[] length, @NativeType("GLchar *") ByteBuffer infoLog) {
-        long __functionAddress = GL.getICD().glGetProgramPipelineInfoLog;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(length, 1);
-        }
-        callPPV(__functionAddress, pipeline, infoLog.remaining(), length, memAddress(infoLog));
+        GL41C.glGetProgramPipelineInfoLog(pipeline, length, infoLog);
     }
 
     /**
@@ -2653,12 +2546,7 @@ public class GL41 {
      * Array version of: {@link #glVertexAttribL1dv VertexAttribL1dv}
      */
     public static void glVertexAttribL1dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") double[] v) {
-        long __functionAddress = GL.getICD().glVertexAttribL1dv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 1);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glVertexAttribL1dv(index, v);
     }
 
     /**
@@ -2667,12 +2555,7 @@ public class GL41 {
      * Array version of: {@link #glVertexAttribL2dv VertexAttribL2dv}
      */
     public static void glVertexAttribL2dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") double[] v) {
-        long __functionAddress = GL.getICD().glVertexAttribL2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 2);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glVertexAttribL2dv(index, v);
     }
 
     /**
@@ -2681,12 +2564,7 @@ public class GL41 {
      * Array version of: {@link #glVertexAttribL3dv VertexAttribL3dv}
      */
     public static void glVertexAttribL3dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") double[] v) {
-        long __functionAddress = GL.getICD().glVertexAttribL3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 3);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glVertexAttribL3dv(index, v);
     }
 
     /**
@@ -2695,12 +2573,7 @@ public class GL41 {
      * Array version of: {@link #glVertexAttribL4dv VertexAttribL4dv}
      */
     public static void glVertexAttribL4dv(@NativeType("GLuint") int index, @NativeType("GLdouble const *") double[] v) {
-        long __functionAddress = GL.getICD().glVertexAttribL4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 4);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glVertexAttribL4dv(index, v);
     }
 
     /**
@@ -2709,12 +2582,7 @@ public class GL41 {
      * Array version of: {@link #glGetVertexAttribLdv GetVertexAttribLdv}
      */
     public static void glGetVertexAttribLdv(@NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLdouble *") double[] params) {
-        long __functionAddress = GL.getICD().glGetVertexAttribLdv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, index, pname, params);
+        GL41C.glGetVertexAttribLdv(index, pname, params);
     }
 
     /**
@@ -2723,11 +2591,7 @@ public class GL41 {
      * Array version of: {@link #glViewportArrayv ViewportArrayv}
      */
     public static void glViewportArrayv(@NativeType("GLuint") int first, @NativeType("GLfloat const *") float[] v) {
-        long __functionAddress = GL.getICD().glViewportArrayv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, v.length >> 2, v);
+        GL41C.glViewportArrayv(first, v);
     }
 
     /**
@@ -2736,12 +2600,7 @@ public class GL41 {
      * Array version of: {@link #glViewportIndexedfv ViewportIndexedfv}
      */
     public static void glViewportIndexedfv(@NativeType("GLuint") int index, @NativeType("GLfloat const *") float[] v) {
-        long __functionAddress = GL.getICD().glViewportIndexedfv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 4);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glViewportIndexedfv(index, v);
     }
 
     /**
@@ -2750,11 +2609,7 @@ public class GL41 {
      * Array version of: {@link #glScissorArrayv ScissorArrayv}
      */
     public static void glScissorArrayv(@NativeType("GLuint") int first, @NativeType("GLint const *") int[] v) {
-        long __functionAddress = GL.getICD().glScissorArrayv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, v.length >> 2, v);
+        GL41C.glScissorArrayv(first, v);
     }
 
     /**
@@ -2763,12 +2618,7 @@ public class GL41 {
      * Array version of: {@link #glScissorIndexedv ScissorIndexedv}
      */
     public static void glScissorIndexedv(@NativeType("GLuint") int index, @NativeType("GLint const *") int[] v) {
-        long __functionAddress = GL.getICD().glScissorIndexedv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(v, 4);
-        }
-        callPV(__functionAddress, index, v);
+        GL41C.glScissorIndexedv(index, v);
     }
 
     /**
@@ -2777,11 +2627,7 @@ public class GL41 {
      * Array version of: {@link #glDepthRangeArrayv DepthRangeArrayv}
      */
     public static void glDepthRangeArrayv(@NativeType("GLuint") int first, @NativeType("GLdouble const *") double[] v) {
-        long __functionAddress = GL.getICD().glDepthRangeArrayv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, first, v.length >> 1, v);
+        GL41C.glDepthRangeArrayv(first, v);
     }
 
     /**
@@ -2790,12 +2636,7 @@ public class GL41 {
      * Array version of: {@link #glGetFloati_v GetFloati_v}
      */
     public static void glGetFloati_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLfloat *") float[] data) {
-        long __functionAddress = GL.getICD().glGetFloati_v;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(data, 1);
-        }
-        callPV(__functionAddress, target, index, data);
+        GL41C.glGetFloati_v(target, index, data);
     }
 
     /**
@@ -2804,12 +2645,7 @@ public class GL41 {
      * Array version of: {@link #glGetDoublei_v GetDoublei_v}
      */
     public static void glGetDoublei_v(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLdouble *") double[] data) {
-        long __functionAddress = GL.getICD().glGetDoublei_v;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(data, 1);
-        }
-        callPV(__functionAddress, target, index, data);
+        GL41C.glGetDoublei_v(target, index, data);
     }
 
 }

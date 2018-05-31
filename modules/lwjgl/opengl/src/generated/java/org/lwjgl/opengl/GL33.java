@@ -11,7 +11,6 @@ import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
 import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 /**
@@ -32,7 +31,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_vertex_type_2_10_10_10_rev.txt">ARB_vertex_type_2_10_10_10_rev</a></li>
  * </ul>
  */
-public class GL33 {
+public class GL33 extends GL32 {
 
     /**
      * Accepted by the {@code src} and {@code dst} parameters of BlendFunc and BlendFunci, and by the {@code srcRGB}, {@code dstRGB}, {@code srcAlpha} and
@@ -112,7 +111,9 @@ public class GL33 {
     // --- [ glBindFragDataLocationIndexed ] ---
 
     /** Unsafe version of: {@link #glBindFragDataLocationIndexed BindFragDataLocationIndexed} */
-    public static native void nglBindFragDataLocationIndexed(int program, int colorNumber, int index, long name);
+    public static void nglBindFragDataLocationIndexed(int program, int colorNumber, int index, long name) {
+        GL33C.nglBindFragDataLocationIndexed(program, colorNumber, index, name);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glBindFragDataLocationIndexed">Reference Page</a></p>
@@ -125,10 +126,7 @@ public class GL33 {
      * @param name        the name of the user-defined varying out variable whose binding to modify
      */
     public static void glBindFragDataLocationIndexed(@NativeType("GLuint") int program, @NativeType("GLuint") int colorNumber, @NativeType("GLuint") int index, @NativeType("GLchar const *") ByteBuffer name) {
-        if (CHECKS) {
-            checkNT1(name);
-        }
-        nglBindFragDataLocationIndexed(program, colorNumber, index, memAddress(name));
+        GL33C.glBindFragDataLocationIndexed(program, colorNumber, index, name);
     }
 
     /**
@@ -142,19 +140,15 @@ public class GL33 {
      * @param name        the name of the user-defined varying out variable whose binding to modify
      */
     public static void glBindFragDataLocationIndexed(@NativeType("GLuint") int program, @NativeType("GLuint") int colorNumber, @NativeType("GLuint") int index, @NativeType("GLchar const *") CharSequence name) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            ByteBuffer nameEncoded = stack.ASCII(name);
-            nglBindFragDataLocationIndexed(program, colorNumber, index, memAddress(nameEncoded));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL33C.glBindFragDataLocationIndexed(program, colorNumber, index, name);
     }
 
     // --- [ glGetFragDataIndex ] ---
 
     /** Unsafe version of: {@link #glGetFragDataIndex GetFragDataIndex} */
-    public static native int nglGetFragDataIndex(int program, long name);
+    public static int nglGetFragDataIndex(int program, long name) {
+        return GL33C.nglGetFragDataIndex(program, name);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetFragDataIndex">Reference Page</a></p>
@@ -166,10 +160,7 @@ public class GL33 {
      */
     @NativeType("GLint")
     public static int glGetFragDataIndex(@NativeType("GLuint") int program, @NativeType("GLchar const *") ByteBuffer name) {
-        if (CHECKS) {
-            checkNT1(name);
-        }
-        return nglGetFragDataIndex(program, memAddress(name));
+        return GL33C.glGetFragDataIndex(program, name);
     }
 
     /**
@@ -182,13 +173,7 @@ public class GL33 {
      */
     @NativeType("GLint")
     public static int glGetFragDataIndex(@NativeType("GLuint") int program, @NativeType("GLchar const *") CharSequence name) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            ByteBuffer nameEncoded = stack.ASCII(name);
-            return nglGetFragDataIndex(program, memAddress(nameEncoded));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetFragDataIndex(program, name);
     }
 
     // --- [ glGenSamplers ] ---
@@ -198,7 +183,9 @@ public class GL33 {
      *
      * @param count the number of sampler object names to generate
      */
-    public static native void nglGenSamplers(int count, long samplers);
+    public static void nglGenSamplers(int count, long samplers) {
+        GL33C.nglGenSamplers(count, samplers);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGenSamplers">Reference Page</a></p>
@@ -208,7 +195,7 @@ public class GL33 {
      * @param samplers a buffer in which the generated sampler object names are stored
      */
     public static void glGenSamplers(@NativeType("GLuint *") IntBuffer samplers) {
-        nglGenSamplers(samplers.remaining(), memAddress(samplers));
+        GL33C.glGenSamplers(samplers);
     }
 
     /**
@@ -218,14 +205,7 @@ public class GL33 {
      */
     @NativeType("void")
     public static int glGenSamplers() {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer samplers = stack.callocInt(1);
-            nglGenSamplers(1, memAddress(samplers));
-            return samplers.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGenSamplers();
     }
 
     // --- [ glDeleteSamplers ] ---
@@ -235,7 +215,9 @@ public class GL33 {
      *
      * @param count the number of sampler objects to be deleted
      */
-    public static native void nglDeleteSamplers(int count, long samplers);
+    public static void nglDeleteSamplers(int count, long samplers) {
+        GL33C.nglDeleteSamplers(count, samplers);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glDeleteSamplers">Reference Page</a></p>
@@ -245,7 +227,7 @@ public class GL33 {
      * @param samplers an array of sampler objects to be deleted
      */
     public static void glDeleteSamplers(@NativeType("GLuint const *") IntBuffer samplers) {
-        nglDeleteSamplers(samplers.remaining(), memAddress(samplers));
+        GL33C.glDeleteSamplers(samplers);
     }
 
     /**
@@ -254,13 +236,7 @@ public class GL33 {
      * Deletes named sampler objects.
      */
     public static void glDeleteSamplers(@NativeType("GLuint const *") int sampler) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer samplers = stack.ints(sampler);
-            nglDeleteSamplers(1, memAddress(samplers));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL33C.glDeleteSamplers(sampler);
     }
 
     // --- [ glIsSampler ] ---
@@ -273,7 +249,9 @@ public class GL33 {
      * @param sampler a value that may be the name of a sampler object
      */
     @NativeType("GLboolean")
-    public static native boolean glIsSampler(@NativeType("GLuint") int sampler);
+    public static boolean glIsSampler(@NativeType("GLuint") int sampler) {
+        return GL33C.glIsSampler(sampler);
+    }
 
     // --- [ glBindSampler ] ---
 
@@ -285,7 +263,9 @@ public class GL33 {
      * @param unit    the index of the texture unit to which the sampler is bound
      * @param sampler the name of a sampler
      */
-    public static native void glBindSampler(@NativeType("GLuint") int unit, @NativeType("GLuint") int sampler);
+    public static void glBindSampler(@NativeType("GLuint") int unit, @NativeType("GLuint") int sampler) {
+        GL33C.glBindSampler(unit, sampler);
+    }
 
     // --- [ glSamplerParameteri ] ---
 
@@ -298,7 +278,9 @@ public class GL33 {
      * @param pname   the symbolic name of a single-valued sampler parameter. One of:<br><table><tr><td>{@link GL11#GL_TEXTURE_WRAP_S TEXTURE_WRAP_S}</td><td>{@link GL11#GL_TEXTURE_WRAP_T TEXTURE_WRAP_T}</td><td>{@link GL12#GL_TEXTURE_WRAP_R TEXTURE_WRAP_R}</td><td>{@link GL11#GL_TEXTURE_MIN_FILTER TEXTURE_MIN_FILTER}</td><td>{@link GL11#GL_TEXTURE_MAG_FILTER TEXTURE_MAG_FILTER}</td></tr><tr><td>{@link GL12#GL_TEXTURE_MIN_LOD TEXTURE_MIN_LOD}</td><td>{@link GL12#GL_TEXTURE_MAX_LOD TEXTURE_MAX_LOD}</td><td>{@link GL14#GL_TEXTURE_LOD_BIAS TEXTURE_LOD_BIAS}</td><td>{@link GL14#GL_TEXTURE_COMPARE_MODE TEXTURE_COMPARE_MODE}</td><td>{@link GL14#GL_TEXTURE_COMPARE_FUNC TEXTURE_COMPARE_FUNC}</td></tr></table>
      * @param param   the value of {@code pname}
      */
-    public static native void glSamplerParameteri(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint") int param);
+    public static void glSamplerParameteri(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint") int param) {
+        GL33C.glSamplerParameteri(sampler, pname, param);
+    }
 
     // --- [ glSamplerParameterf ] ---
 
@@ -311,12 +293,16 @@ public class GL33 {
      * @param pname   the symbolic name of a single-valued sampler parameter
      * @param param   the value of {@code pname}
      */
-    public static native void glSamplerParameterf(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param);
+    public static void glSamplerParameterf(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat") float param) {
+        GL33C.glSamplerParameterf(sampler, pname, param);
+    }
 
     // --- [ glSamplerParameteriv ] ---
 
     /** Unsafe version of: {@link #glSamplerParameteriv SamplerParameteriv} */
-    public static native void nglSamplerParameteriv(int sampler, int pname, long params);
+    public static void nglSamplerParameteriv(int sampler, int pname, long params) {
+        GL33C.nglSamplerParameteriv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a></p>
@@ -328,16 +314,15 @@ public class GL33 {
      * @param params  an array where the value or values of {@code pname} are stored
      */
     public static void glSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglSamplerParameteriv(sampler, pname, memAddress(params));
+        GL33C.glSamplerParameteriv(sampler, pname, params);
     }
 
     // --- [ glSamplerParameterfv ] ---
 
     /** Unsafe version of: {@link #glSamplerParameterfv SamplerParameterfv} */
-    public static native void nglSamplerParameterfv(int sampler, int pname, long params);
+    public static void nglSamplerParameterfv(int sampler, int pname, long params) {
+        GL33C.nglSamplerParameterfv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a></p>
@@ -349,16 +334,15 @@ public class GL33 {
      * @param params  an array where the value or values of {@code pname} are stored
      */
     public static void glSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglSamplerParameterfv(sampler, pname, memAddress(params));
+        GL33C.glSamplerParameterfv(sampler, pname, params);
     }
 
     // --- [ glSamplerParameterIiv ] ---
 
     /** Unsafe version of: {@link #glSamplerParameterIiv SamplerParameterIiv} */
-    public static native void nglSamplerParameterIiv(int sampler, int pname, long params);
+    public static void nglSamplerParameterIiv(int sampler, int pname, long params) {
+        GL33C.nglSamplerParameterIiv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a></p>
@@ -370,16 +354,15 @@ public class GL33 {
      * @param params  an array where the value or values of {@code pname} are stored
      */
     public static void glSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglSamplerParameterIiv(sampler, pname, memAddress(params));
+        GL33C.glSamplerParameterIiv(sampler, pname, params);
     }
 
     // --- [ glSamplerParameterIuiv ] ---
 
     /** Unsafe version of: {@link #glSamplerParameterIuiv SamplerParameterIuiv} */
-    public static native void nglSamplerParameterIuiv(int sampler, int pname, long params);
+    public static void nglSamplerParameterIuiv(int sampler, int pname, long params) {
+        GL33C.nglSamplerParameterIuiv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glSamplerParameter">Reference Page</a></p>
@@ -391,16 +374,15 @@ public class GL33 {
      * @param params  an array where the value or values of {@code pname} are stored
      */
     public static void glSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint const *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglSamplerParameterIuiv(sampler, pname, memAddress(params));
+        GL33C.glSamplerParameterIuiv(sampler, pname, params);
     }
 
     // --- [ glGetSamplerParameteriv ] ---
 
     /** Unsafe version of: {@link #glGetSamplerParameteriv GetSamplerParameteriv} */
-    public static native void nglGetSamplerParameteriv(int sampler, int pname, long params);
+    public static void nglGetSamplerParameteriv(int sampler, int pname, long params) {
+        GL33C.nglGetSamplerParameteriv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a></p>
@@ -412,10 +394,7 @@ public class GL33 {
      * @param params  the sampler parameters
      */
     public static void glGetSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetSamplerParameteriv(sampler, pname, memAddress(params));
+        GL33C.glGetSamplerParameteriv(sampler, pname, params);
     }
 
     /**
@@ -428,20 +407,15 @@ public class GL33 {
      */
     @NativeType("void")
     public static int glGetSamplerParameteri(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer params = stack.callocInt(1);
-            nglGetSamplerParameteriv(sampler, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetSamplerParameteri(sampler, pname);
     }
 
     // --- [ glGetSamplerParameterfv ] ---
 
     /** Unsafe version of: {@link #glGetSamplerParameterfv GetSamplerParameterfv} */
-    public static native void nglGetSamplerParameterfv(int sampler, int pname, long params);
+    public static void nglGetSamplerParameterfv(int sampler, int pname, long params) {
+        GL33C.nglGetSamplerParameterfv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a></p>
@@ -453,10 +427,7 @@ public class GL33 {
      * @param params  the sampler parameters
      */
     public static void glGetSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat *") FloatBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetSamplerParameterfv(sampler, pname, memAddress(params));
+        GL33C.glGetSamplerParameterfv(sampler, pname, params);
     }
 
     /**
@@ -469,20 +440,15 @@ public class GL33 {
      */
     @NativeType("void")
     public static float glGetSamplerParameterf(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            FloatBuffer params = stack.callocFloat(1);
-            nglGetSamplerParameterfv(sampler, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetSamplerParameterf(sampler, pname);
     }
 
     // --- [ glGetSamplerParameterIiv ] ---
 
     /** Unsafe version of: {@link #glGetSamplerParameterIiv GetSamplerParameterIiv} */
-    public static native void nglGetSamplerParameterIiv(int sampler, int pname, long params);
+    public static void nglGetSamplerParameterIiv(int sampler, int pname, long params) {
+        GL33C.nglGetSamplerParameterIiv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a></p>
@@ -494,10 +460,7 @@ public class GL33 {
      * @param params  the sampler parameters
      */
     public static void glGetSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetSamplerParameterIiv(sampler, pname, memAddress(params));
+        GL33C.glGetSamplerParameterIiv(sampler, pname, params);
     }
 
     /**
@@ -510,20 +473,15 @@ public class GL33 {
      */
     @NativeType("void")
     public static int glGetSamplerParameterIi(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer params = stack.callocInt(1);
-            nglGetSamplerParameterIiv(sampler, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetSamplerParameterIi(sampler, pname);
     }
 
     // --- [ glGetSamplerParameterIuiv ] ---
 
     /** Unsafe version of: {@link #glGetSamplerParameterIuiv GetSamplerParameterIuiv} */
-    public static native void nglGetSamplerParameterIuiv(int sampler, int pname, long params);
+    public static void nglGetSamplerParameterIuiv(int sampler, int pname, long params) {
+        GL33C.nglGetSamplerParameterIuiv(sampler, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetSamplerParameter">Reference Page</a></p>
@@ -535,10 +493,7 @@ public class GL33 {
      * @param params  the sampler parameters
      */
     public static void glGetSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetSamplerParameterIuiv(sampler, pname, memAddress(params));
+        GL33C.glGetSamplerParameterIuiv(sampler, pname, params);
     }
 
     /**
@@ -551,14 +506,7 @@ public class GL33 {
      */
     @NativeType("void")
     public static int glGetSamplerParameterIui(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer params = stack.callocInt(1);
-            nglGetSamplerParameterIuiv(sampler, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetSamplerParameterIui(sampler, pname);
     }
 
     // --- [ glQueryCounter ] ---
@@ -569,14 +517,18 @@ public class GL33 {
      * Records the GL time into a query object after all previous commands have reached the GL server but have not yet necessarily executed.
      *
      * @param id     the name of a query object into which to record the GL time
-     * @param target the counter to query. Must be:<br><table><tr><td>{@link #GL_TIMESTAMP TIMESTAMP}</td></tr></table>
+     * @param target the counter to query. Must be:<br><table><tr><td>{@link GL33C#GL_TIMESTAMP TIMESTAMP}</td></tr></table>
      */
-    public static native void glQueryCounter(@NativeType("GLuint") int id, @NativeType("GLenum") int target);
+    public static void glQueryCounter(@NativeType("GLuint") int id, @NativeType("GLenum") int target) {
+        GL33C.glQueryCounter(id, target);
+    }
 
     // --- [ glGetQueryObjecti64v ] ---
 
     /** Unsafe version of: {@link #glGetQueryObjecti64v GetQueryObjecti64v} */
-    public static native void nglGetQueryObjecti64v(int id, int pname, long params);
+    public static void nglGetQueryObjecti64v(int id, int pname, long params) {
+        GL33C.nglGetQueryObjecti64v(id, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a></p>
@@ -588,10 +540,7 @@ public class GL33 {
      * @param params the requested data
      */
     public static void glGetQueryObjecti64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") LongBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetQueryObjecti64v(id, pname, memAddress(params));
+        GL33C.glGetQueryObjecti64v(id, pname, params);
     }
 
     /**
@@ -604,20 +553,15 @@ public class GL33 {
      */
     @NativeType("void")
     public static long glGetQueryObjecti64(@NativeType("GLuint") int id, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            LongBuffer params = stack.callocLong(1);
-            nglGetQueryObjecti64v(id, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetQueryObjecti64(id, pname);
     }
 
     // --- [ glGetQueryObjectui64v ] ---
 
     /** Unsafe version of: {@link #glGetQueryObjectui64v GetQueryObjectui64v} */
-    public static native void nglGetQueryObjectui64v(int id, int pname, long params);
+    public static void nglGetQueryObjectui64v(int id, int pname, long params) {
+        GL33C.nglGetQueryObjectui64v(id, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetQueryObject">Reference Page</a></p>
@@ -629,10 +573,7 @@ public class GL33 {
      * @param params the requested data
      */
     public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") LongBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetQueryObjectui64v(id, pname, memAddress(params));
+        GL33C.glGetQueryObjectui64v(id, pname, params);
     }
 
     /**
@@ -645,14 +586,7 @@ public class GL33 {
      */
     @NativeType("void")
     public static long glGetQueryObjectui64(@NativeType("GLuint") int id, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            LongBuffer params = stack.callocLong(1);
-            nglGetQueryObjectui64v(id, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL33C.glGetQueryObjectui64(id, pname);
     }
 
     // --- [ glVertexAttribDivisor ] ---
@@ -665,7 +599,9 @@ public class GL33 {
      * @param index   the index of the generic vertex attribute
      * @param divisor the number of instances that will pass between updates of the generic attribute at slot {@code index}
      */
-    public static native void glVertexAttribDivisor(@NativeType("GLuint") int index, @NativeType("GLuint") int divisor);
+    public static void glVertexAttribDivisor(@NativeType("GLuint") int index, @NativeType("GLuint") int divisor) {
+        GL33C.glVertexAttribDivisor(index, divisor);
+    }
 
     // --- [ glVertexP2ui ] ---
 
@@ -1160,61 +1096,71 @@ public class GL33 {
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
      * 
-     * Packed component version of {@link GL20#glVertexAttrib1f VertexAttrib1f}.
+     * Packed component version of {@link GL20C#glVertexAttrib1f VertexAttrib1f}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
-    public static native void glVertexAttribP1ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value);
+    public static void glVertexAttribP1ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
+        GL33C.glVertexAttribP1ui(index, type, normalized, value);
+    }
 
     // --- [ glVertexAttribP2ui ] ---
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
      * 
-     * Packed component version of {@link GL20#glVertexAttrib2f VertexAttrib2f}.
+     * Packed component version of {@link GL20C#glVertexAttrib2f VertexAttrib2f}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
-    public static native void glVertexAttribP2ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value);
+    public static void glVertexAttribP2ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
+        GL33C.glVertexAttribP2ui(index, type, normalized, value);
+    }
 
     // --- [ glVertexAttribP3ui ] ---
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
      * 
-     * Packed component version of {@link GL20#glVertexAttrib3f VertexAttrib3f}.
+     * Packed component version of {@link GL20C#glVertexAttrib3f VertexAttrib3f}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
-    public static native void glVertexAttribP3ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value);
+    public static void glVertexAttribP3ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
+        GL33C.glVertexAttribP3ui(index, type, normalized, value);
+    }
 
     // --- [ glVertexAttribP4ui ] ---
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
      * 
-     * Packed component version of {@link GL20#glVertexAttrib4f VertexAttrib4f}.
+     * Packed component version of {@link GL20C#glVertexAttrib4f VertexAttrib4f}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
-    public static native void glVertexAttribP4ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value);
+    public static void glVertexAttribP4ui(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint") int value) {
+        GL33C.glVertexAttribP4ui(index, type, normalized, value);
+    }
 
     // --- [ glVertexAttribP1uiv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribP1uiv VertexAttribP1uiv} */
-    public static native void nglVertexAttribP1uiv(int index, int type, boolean normalized, long value);
+    public static void nglVertexAttribP1uiv(int index, int type, boolean normalized, long value) {
+        GL33C.nglVertexAttribP1uiv(index, type, normalized, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1222,21 +1168,20 @@ public class GL33 {
      * Pointer version of {@link #glVertexAttribP1ui VertexAttribP1ui}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
     public static void glVertexAttribP1uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
-        if (CHECKS) {
-            check(value, 1);
-        }
-        nglVertexAttribP1uiv(index, type, normalized, memAddress(value));
+        GL33C.glVertexAttribP1uiv(index, type, normalized, value);
     }
 
     // --- [ glVertexAttribP2uiv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribP2uiv VertexAttribP2uiv} */
-    public static native void nglVertexAttribP2uiv(int index, int type, boolean normalized, long value);
+    public static void nglVertexAttribP2uiv(int index, int type, boolean normalized, long value) {
+        GL33C.nglVertexAttribP2uiv(index, type, normalized, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1244,21 +1189,20 @@ public class GL33 {
      * Pointer version of {@link #glVertexAttribP2ui VertexAttribP2ui}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
     public static void glVertexAttribP2uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
-        if (CHECKS) {
-            check(value, 1);
-        }
-        nglVertexAttribP2uiv(index, type, normalized, memAddress(value));
+        GL33C.glVertexAttribP2uiv(index, type, normalized, value);
     }
 
     // --- [ glVertexAttribP3uiv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribP3uiv VertexAttribP3uiv} */
-    public static native void nglVertexAttribP3uiv(int index, int type, boolean normalized, long value);
+    public static void nglVertexAttribP3uiv(int index, int type, boolean normalized, long value) {
+        GL33C.nglVertexAttribP3uiv(index, type, normalized, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1266,21 +1210,20 @@ public class GL33 {
      * Pointer version of {@link #glVertexAttribP3ui VertexAttribP3ui}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
     public static void glVertexAttribP3uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
-        if (CHECKS) {
-            check(value, 1);
-        }
-        nglVertexAttribP3uiv(index, type, normalized, memAddress(value));
+        GL33C.glVertexAttribP3uiv(index, type, normalized, value);
     }
 
     // --- [ glVertexAttribP4uiv ] ---
 
     /** Unsafe version of: {@link #glVertexAttribP4uiv VertexAttribP4uiv} */
-    public static native void nglVertexAttribP4uiv(int index, int type, boolean normalized, long value);
+    public static void nglVertexAttribP4uiv(int index, int type, boolean normalized, long value) {
+        GL33C.nglVertexAttribP4uiv(index, type, normalized, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glVertexAttrib">Reference Page</a></p>
@@ -1288,15 +1231,12 @@ public class GL33 {
      * Pointer version of {@link #glVertexAttribP4ui VertexAttribP4ui}.
      *
      * @param index      the index of the generic vertex attribute to be modified
-     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link #GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
+     * @param type       type of packing used on the data. One of:<br><table><tr><td>{@link GL33C#GL_INT_2_10_10_10_REV INT_2_10_10_10_REV}</td><td>{@link GL12#GL_UNSIGNED_INT_2_10_10_10_REV UNSIGNED_INT_2_10_10_10_REV}</td></tr></table>
      * @param normalized whether values should be normalized or cast directly to floating-point
      * @param value      the packed value
      */
     public static void glVertexAttribP4uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") IntBuffer value) {
-        if (CHECKS) {
-            check(value, 1);
-        }
-        nglVertexAttribP4uiv(index, type, normalized, memAddress(value));
+        GL33C.glVertexAttribP4uiv(index, type, normalized, value);
     }
 
     /**
@@ -1305,11 +1245,7 @@ public class GL33 {
      * Array version of: {@link #glGenSamplers GenSamplers}
      */
     public static void glGenSamplers(@NativeType("GLuint *") int[] samplers) {
-        long __functionAddress = GL.getICD().glGenSamplers;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, samplers.length, samplers);
+        GL33C.glGenSamplers(samplers);
     }
 
     /**
@@ -1318,11 +1254,7 @@ public class GL33 {
      * Array version of: {@link #glDeleteSamplers DeleteSamplers}
      */
     public static void glDeleteSamplers(@NativeType("GLuint const *") int[] samplers) {
-        long __functionAddress = GL.getICD().glDeleteSamplers;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, samplers.length, samplers);
+        GL33C.glDeleteSamplers(samplers);
     }
 
     /**
@@ -1331,12 +1263,7 @@ public class GL33 {
      * Array version of: {@link #glSamplerParameteriv SamplerParameteriv}
      */
     public static void glSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
-        long __functionAddress = GL.getICD().glSamplerParameteriv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glSamplerParameteriv(sampler, pname, params);
     }
 
     /**
@@ -1345,12 +1272,7 @@ public class GL33 {
      * Array version of: {@link #glSamplerParameterfv SamplerParameterfv}
      */
     public static void glSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] params) {
-        long __functionAddress = GL.getICD().glSamplerParameterfv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glSamplerParameterfv(sampler, pname, params);
     }
 
     /**
@@ -1359,12 +1281,7 @@ public class GL33 {
      * Array version of: {@link #glSamplerParameterIiv SamplerParameterIiv}
      */
     public static void glSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint const *") int[] params) {
-        long __functionAddress = GL.getICD().glSamplerParameterIiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glSamplerParameterIiv(sampler, pname, params);
     }
 
     /**
@@ -1373,12 +1290,7 @@ public class GL33 {
      * Array version of: {@link #glSamplerParameterIuiv SamplerParameterIuiv}
      */
     public static void glSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint const *") int[] params) {
-        long __functionAddress = GL.getICD().glSamplerParameterIuiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glSamplerParameterIuiv(sampler, pname, params);
     }
 
     /**
@@ -1387,12 +1299,7 @@ public class GL33 {
      * Array version of: {@link #glGetSamplerParameteriv GetSamplerParameteriv}
      */
     public static void glGetSamplerParameteriv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
-        long __functionAddress = GL.getICD().glGetSamplerParameteriv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glGetSamplerParameteriv(sampler, pname, params);
     }
 
     /**
@@ -1401,12 +1308,7 @@ public class GL33 {
      * Array version of: {@link #glGetSamplerParameterfv GetSamplerParameterfv}
      */
     public static void glGetSamplerParameterfv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLfloat *") float[] params) {
-        long __functionAddress = GL.getICD().glGetSamplerParameterfv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glGetSamplerParameterfv(sampler, pname, params);
     }
 
     /**
@@ -1415,12 +1317,7 @@ public class GL33 {
      * Array version of: {@link #glGetSamplerParameterIiv GetSamplerParameterIiv}
      */
     public static void glGetSamplerParameterIiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
-        long __functionAddress = GL.getICD().glGetSamplerParameterIiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glGetSamplerParameterIiv(sampler, pname, params);
     }
 
     /**
@@ -1429,12 +1326,7 @@ public class GL33 {
      * Array version of: {@link #glGetSamplerParameterIuiv GetSamplerParameterIuiv}
      */
     public static void glGetSamplerParameterIuiv(@NativeType("GLuint") int sampler, @NativeType("GLenum") int pname, @NativeType("GLuint *") int[] params) {
-        long __functionAddress = GL.getICD().glGetSamplerParameterIuiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, sampler, pname, params);
+        GL33C.glGetSamplerParameterIuiv(sampler, pname, params);
     }
 
     /**
@@ -1443,12 +1335,7 @@ public class GL33 {
      * Array version of: {@link #glGetQueryObjecti64v GetQueryObjecti64v}
      */
     public static void glGetQueryObjecti64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLint64 *") long[] params) {
-        long __functionAddress = GL.getICD().glGetQueryObjecti64v;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, id, pname, params);
+        GL33C.glGetQueryObjecti64v(id, pname, params);
     }
 
     /**
@@ -1457,12 +1344,7 @@ public class GL33 {
      * Array version of: {@link #glGetQueryObjectui64v GetQueryObjectui64v}
      */
     public static void glGetQueryObjectui64v(@NativeType("GLuint") int id, @NativeType("GLenum") int pname, @NativeType("GLuint64 *") long[] params) {
-        long __functionAddress = GL.getICD().glGetQueryObjectui64v;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, id, pname, params);
+        GL33C.glGetQueryObjectui64v(id, pname, params);
     }
 
     /**
@@ -1681,12 +1563,7 @@ public class GL33 {
      * Array version of: {@link #glVertexAttribP1uiv VertexAttribP1uiv}
      */
     public static void glVertexAttribP1uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glVertexAttribP1uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(value, 1);
-        }
-        callPV(__functionAddress, index, type, normalized, value);
+        GL33C.glVertexAttribP1uiv(index, type, normalized, value);
     }
 
     /**
@@ -1695,12 +1572,7 @@ public class GL33 {
      * Array version of: {@link #glVertexAttribP2uiv VertexAttribP2uiv}
      */
     public static void glVertexAttribP2uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glVertexAttribP2uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(value, 1);
-        }
-        callPV(__functionAddress, index, type, normalized, value);
+        GL33C.glVertexAttribP2uiv(index, type, normalized, value);
     }
 
     /**
@@ -1709,12 +1581,7 @@ public class GL33 {
      * Array version of: {@link #glVertexAttribP3uiv VertexAttribP3uiv}
      */
     public static void glVertexAttribP3uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glVertexAttribP3uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(value, 1);
-        }
-        callPV(__functionAddress, index, type, normalized, value);
+        GL33C.glVertexAttribP3uiv(index, type, normalized, value);
     }
 
     /**
@@ -1723,12 +1590,7 @@ public class GL33 {
      * Array version of: {@link #glVertexAttribP4uiv VertexAttribP4uiv}
      */
     public static void glVertexAttribP4uiv(@NativeType("GLuint") int index, @NativeType("GLenum") int type, @NativeType("GLboolean") boolean normalized, @NativeType("GLuint const *") int[] value) {
-        long __functionAddress = GL.getICD().glVertexAttribP4uiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(value, 1);
-        }
-        callPV(__functionAddress, index, type, normalized, value);
+        GL33C.glVertexAttribP4uiv(index, type, normalized, value);
     }
 
 }

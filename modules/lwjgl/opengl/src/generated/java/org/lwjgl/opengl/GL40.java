@@ -12,9 +12,6 @@ import java.nio.*;
 import org.lwjgl.system.*;
 
 import static org.lwjgl.system.Checks.*;
-import static org.lwjgl.system.JNI.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * The core OpenGL 4.0 functionality. OpenGL 4.0 implementations support revision 4.00 of the OpenGL Shading Language.
@@ -37,7 +34,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * <li><a target="_blank" href="https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_transform_feedback3.txt">ARB_transform_feedback3</a></li>
  * </ul>
  */
-public class GL40 {
+public class GL40 extends GL33 {
 
     /**
      * Accepted by the {@code target} parameters of BindBuffer, BufferData, BufferSubData, MapBuffer, UnmapBuffer, GetBufferSubData, GetBufferPointerv,
@@ -221,7 +218,9 @@ public class GL40 {
      * @param buf  the index of the draw buffer for which to set the blend equation
      * @param mode how source and destination colors are combined. One of:<br><table><tr><td>{@link GL14#GL_FUNC_ADD FUNC_ADD}</td><td>{@link GL14#GL_FUNC_SUBTRACT FUNC_SUBTRACT}</td><td>{@link GL14#GL_FUNC_REVERSE_SUBTRACT FUNC_REVERSE_SUBTRACT}</td><td>{@link GL14#GL_MIN MIN}</td><td>{@link GL14#GL_MAX MAX}</td></tr></table>
      */
-    public static native void glBlendEquationi(@NativeType("GLuint") int buf, @NativeType("GLenum") int mode);
+    public static void glBlendEquationi(@NativeType("GLuint") int buf, @NativeType("GLenum") int mode) {
+        GL40C.glBlendEquationi(buf, mode);
+    }
 
     // --- [ glBlendEquationSeparatei ] ---
 
@@ -234,7 +233,9 @@ public class GL40 {
      * @param modeRGB   the RGB blend equation, how the red, green, and blue components of the source and destination colors are combined. One of:<br><table><tr><td>{@link GL14#GL_FUNC_ADD FUNC_ADD}</td><td>{@link GL14#GL_FUNC_SUBTRACT FUNC_SUBTRACT}</td><td>{@link GL14#GL_FUNC_REVERSE_SUBTRACT FUNC_REVERSE_SUBTRACT}</td><td>{@link GL14#GL_MIN MIN}</td><td>{@link GL14#GL_MAX MAX}</td></tr></table>
      * @param modeAlpha the alpha blend equation, how the alpha component of the source and destination colors are combined. One of:<br><table><tr><td>{@link GL14#GL_FUNC_ADD FUNC_ADD}</td><td>{@link GL14#GL_FUNC_SUBTRACT FUNC_SUBTRACT}</td><td>{@link GL14#GL_FUNC_REVERSE_SUBTRACT FUNC_REVERSE_SUBTRACT}</td><td>{@link GL14#GL_MIN MIN}</td><td>{@link GL14#GL_MAX MAX}</td></tr></table>
      */
-    public static native void glBlendEquationSeparatei(@NativeType("GLuint") int buf, @NativeType("GLenum") int modeRGB, @NativeType("GLenum") int modeAlpha);
+    public static void glBlendEquationSeparatei(@NativeType("GLuint") int buf, @NativeType("GLenum") int modeRGB, @NativeType("GLenum") int modeAlpha) {
+        GL40C.glBlendEquationSeparatei(buf, modeRGB, modeAlpha);
+    }
 
     // --- [ glBlendFunci ] ---
 
@@ -247,7 +248,9 @@ public class GL40 {
      * @param sfactor how the red, green, blue, and alpha source blending factors are computed
      * @param dfactor how the red, green, blue, and alpha destination blending factors are computed
      */
-    public static native void glBlendFunci(@NativeType("GLuint") int buf, @NativeType("GLenum") int sfactor, @NativeType("GLenum") int dfactor);
+    public static void glBlendFunci(@NativeType("GLuint") int buf, @NativeType("GLenum") int sfactor, @NativeType("GLenum") int dfactor) {
+        GL40C.glBlendFunci(buf, sfactor, dfactor);
+    }
 
     // --- [ glBlendFuncSeparatei ] ---
 
@@ -262,19 +265,23 @@ public class GL40 {
      * @param srcAlpha how the alpha source blending factor is computed
      * @param dstAlpha how the alpha destination blending factor is computed
      */
-    public static native void glBlendFuncSeparatei(@NativeType("GLuint") int buf, @NativeType("GLenum") int srcRGB, @NativeType("GLenum") int dstRGB, @NativeType("GLenum") int srcAlpha, @NativeType("GLenum") int dstAlpha);
+    public static void glBlendFuncSeparatei(@NativeType("GLuint") int buf, @NativeType("GLenum") int srcRGB, @NativeType("GLenum") int dstRGB, @NativeType("GLenum") int srcAlpha, @NativeType("GLenum") int dstAlpha) {
+        GL40C.glBlendFuncSeparatei(buf, srcRGB, dstRGB, srcAlpha, dstAlpha);
+    }
 
     // --- [ glDrawArraysIndirect ] ---
 
     /** Unsafe version of: {@link #glDrawArraysIndirect DrawArraysIndirect} */
-    public static native void nglDrawArraysIndirect(int mode, long indirect);
+    public static void nglDrawArraysIndirect(int mode, long indirect) {
+        GL40C.nglDrawArraysIndirect(mode, indirect);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glDrawArraysIndirect">Reference Page</a></p>
      * 
      * Renders primitives from array data, taking parameters from memory.
      * 
-     * <p>{@code glDrawArraysIndirect} behaves similarly to {@link GL42#glDrawArraysInstancedBaseInstance DrawArraysInstancedBaseInstance}, except that the parameters to
+     * <p>{@code glDrawArraysIndirect} behaves similarly to {@link GL42C#glDrawArraysInstancedBaseInstance DrawArraysInstancedBaseInstance}, except that the parameters to
      * glDrawArraysInstancedBaseInstance are stored in memory at the address given by {@code indirect}.</p>
      * 
      * <p>The parameters addressed by {@code indirect} are packed into a structure that takes the form (in C):</p>
@@ -290,14 +297,11 @@ public class GL40 {
      * const DrawArraysIndirectCommand *cmd = (const DrawArraysIndirectCommand *)indirect;
      * glDrawArraysInstancedBaseInstance(mode, cmd->first, cmd->count, cmd->primCount, cmd->baseInstance);</pre></code>
      *
-     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param indirect a structure containing the draw parameters
      */
     public static void glDrawArraysIndirect(@NativeType("GLenum") int mode, @NativeType("void const *") ByteBuffer indirect) {
-        if (CHECKS) {
-            check(indirect, 4 * 4);
-        }
-        nglDrawArraysIndirect(mode, memAddress(indirect));
+        GL40C.glDrawArraysIndirect(mode, indirect);
     }
 
     /**
@@ -305,7 +309,7 @@ public class GL40 {
      * 
      * Renders primitives from array data, taking parameters from memory.
      * 
-     * <p>{@code glDrawArraysIndirect} behaves similarly to {@link GL42#glDrawArraysInstancedBaseInstance DrawArraysInstancedBaseInstance}, except that the parameters to
+     * <p>{@code glDrawArraysIndirect} behaves similarly to {@link GL42C#glDrawArraysInstancedBaseInstance DrawArraysInstancedBaseInstance}, except that the parameters to
      * glDrawArraysInstancedBaseInstance are stored in memory at the address given by {@code indirect}.</p>
      * 
      * <p>The parameters addressed by {@code indirect} are packed into a structure that takes the form (in C):</p>
@@ -321,11 +325,11 @@ public class GL40 {
      * const DrawArraysIndirectCommand *cmd = (const DrawArraysIndirectCommand *)indirect;
      * glDrawArraysInstancedBaseInstance(mode, cmd->first, cmd->count, cmd->primCount, cmd->baseInstance);</pre></code>
      *
-     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param indirect a structure containing the draw parameters
      */
     public static void glDrawArraysIndirect(@NativeType("GLenum") int mode, @NativeType("void const *") long indirect) {
-        nglDrawArraysIndirect(mode, indirect);
+        GL40C.glDrawArraysIndirect(mode, indirect);
     }
 
     /**
@@ -333,7 +337,7 @@ public class GL40 {
      * 
      * Renders primitives from array data, taking parameters from memory.
      * 
-     * <p>{@code glDrawArraysIndirect} behaves similarly to {@link GL42#glDrawArraysInstancedBaseInstance DrawArraysInstancedBaseInstance}, except that the parameters to
+     * <p>{@code glDrawArraysIndirect} behaves similarly to {@link GL42C#glDrawArraysInstancedBaseInstance DrawArraysInstancedBaseInstance}, except that the parameters to
      * glDrawArraysInstancedBaseInstance are stored in memory at the address given by {@code indirect}.</p>
      * 
      * <p>The parameters addressed by {@code indirect} are packed into a structure that takes the form (in C):</p>
@@ -349,27 +353,26 @@ public class GL40 {
      * const DrawArraysIndirectCommand *cmd = (const DrawArraysIndirectCommand *)indirect;
      * glDrawArraysInstancedBaseInstance(mode, cmd->first, cmd->count, cmd->primCount, cmd->baseInstance);</pre></code>
      *
-     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param indirect a structure containing the draw parameters
      */
     public static void glDrawArraysIndirect(@NativeType("GLenum") int mode, @NativeType("void const *") IntBuffer indirect) {
-        if (CHECKS) {
-            check(indirect, (4 * 4) >> 2);
-        }
-        nglDrawArraysIndirect(mode, memAddress(indirect));
+        GL40C.glDrawArraysIndirect(mode, indirect);
     }
 
     // --- [ glDrawElementsIndirect ] ---
 
     /** Unsafe version of: {@link #glDrawElementsIndirect DrawElementsIndirect} */
-    public static native void nglDrawElementsIndirect(int mode, int type, long indirect);
+    public static void nglDrawElementsIndirect(int mode, int type, long indirect) {
+        GL40C.nglDrawElementsIndirect(mode, type, indirect);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glDrawElementsIndirect">Reference Page</a></p>
      * 
      * Renders indexed primitives from array data, taking parameters from memory.
      * 
-     * <p>{@code glDrawElementsIndirect} behaves similarly to {@link GL42#glDrawElementsInstancedBaseVertexBaseInstance DrawElementsInstancedBaseVertexBaseInstance}, execpt that the parameters to
+     * <p>{@code glDrawElementsIndirect} behaves similarly to {@link GL42C#glDrawElementsInstancedBaseVertexBaseInstance DrawElementsInstancedBaseVertexBaseInstance}, execpt that the parameters to
      * glDrawElementsInstancedBaseVertexBaseInstance are stored in memory at the address given by {@code indirect}.</p>
      * 
      * <p>The parameters addressed by {@code indirect} are packed into a structure that takes the form (in C):</p>
@@ -399,15 +402,12 @@ public class GL40 {
      *     );
      * }</pre></code>
      *
-     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param type     the type of data in the buffer bound to the {@link GL15#GL_ELEMENT_ARRAY_BUFFER ELEMENT_ARRAY_BUFFER} binding. One of:<br><table><tr><td>{@link GL11#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11#GL_UNSIGNED_INT UNSIGNED_INT}</td></tr></table>
      * @param indirect the address of a structure containing the draw parameters
      */
     public static void glDrawElementsIndirect(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") ByteBuffer indirect) {
-        if (CHECKS) {
-            check(indirect, 5 * 4);
-        }
-        nglDrawElementsIndirect(mode, type, memAddress(indirect));
+        GL40C.glDrawElementsIndirect(mode, type, indirect);
     }
 
     /**
@@ -415,7 +415,7 @@ public class GL40 {
      * 
      * Renders indexed primitives from array data, taking parameters from memory.
      * 
-     * <p>{@code glDrawElementsIndirect} behaves similarly to {@link GL42#glDrawElementsInstancedBaseVertexBaseInstance DrawElementsInstancedBaseVertexBaseInstance}, execpt that the parameters to
+     * <p>{@code glDrawElementsIndirect} behaves similarly to {@link GL42C#glDrawElementsInstancedBaseVertexBaseInstance DrawElementsInstancedBaseVertexBaseInstance}, execpt that the parameters to
      * glDrawElementsInstancedBaseVertexBaseInstance are stored in memory at the address given by {@code indirect}.</p>
      * 
      * <p>The parameters addressed by {@code indirect} are packed into a structure that takes the form (in C):</p>
@@ -445,12 +445,12 @@ public class GL40 {
      *     );
      * }</pre></code>
      *
-     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param type     the type of data in the buffer bound to the {@link GL15#GL_ELEMENT_ARRAY_BUFFER ELEMENT_ARRAY_BUFFER} binding. One of:<br><table><tr><td>{@link GL11#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11#GL_UNSIGNED_INT UNSIGNED_INT}</td></tr></table>
      * @param indirect the address of a structure containing the draw parameters
      */
     public static void glDrawElementsIndirect(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") long indirect) {
-        nglDrawElementsIndirect(mode, type, indirect);
+        GL40C.glDrawElementsIndirect(mode, type, indirect);
     }
 
     /**
@@ -458,7 +458,7 @@ public class GL40 {
      * 
      * Renders indexed primitives from array data, taking parameters from memory.
      * 
-     * <p>{@code glDrawElementsIndirect} behaves similarly to {@link GL42#glDrawElementsInstancedBaseVertexBaseInstance DrawElementsInstancedBaseVertexBaseInstance}, execpt that the parameters to
+     * <p>{@code glDrawElementsIndirect} behaves similarly to {@link GL42C#glDrawElementsInstancedBaseVertexBaseInstance DrawElementsInstancedBaseVertexBaseInstance}, execpt that the parameters to
      * glDrawElementsInstancedBaseVertexBaseInstance are stored in memory at the address given by {@code indirect}.</p>
      * 
      * <p>The parameters addressed by {@code indirect} are packed into a structure that takes the form (in C):</p>
@@ -488,15 +488,12 @@ public class GL40 {
      *     );
      * }</pre></code>
      *
-     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode     what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param type     the type of data in the buffer bound to the {@link GL15#GL_ELEMENT_ARRAY_BUFFER ELEMENT_ARRAY_BUFFER} binding. One of:<br><table><tr><td>{@link GL11#GL_UNSIGNED_BYTE UNSIGNED_BYTE}</td><td>{@link GL11#GL_UNSIGNED_SHORT UNSIGNED_SHORT}</td><td>{@link GL11#GL_UNSIGNED_INT UNSIGNED_INT}</td></tr></table>
      * @param indirect the address of a structure containing the draw parameters
      */
     public static void glDrawElementsIndirect(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") IntBuffer indirect) {
-        if (CHECKS) {
-            check(indirect, (5 * 4) >> 2);
-        }
-        nglDrawElementsIndirect(mode, type, memAddress(indirect));
+        GL40C.glDrawElementsIndirect(mode, type, indirect);
     }
 
     // --- [ glUniform1d ] ---
@@ -509,7 +506,9 @@ public class GL40 {
      * @param location the location of the uniform variable to be modified
      * @param x        the uniform x value
      */
-    public static native void glUniform1d(@NativeType("GLint") int location, @NativeType("GLdouble") double x);
+    public static void glUniform1d(@NativeType("GLint") int location, @NativeType("GLdouble") double x) {
+        GL40C.glUniform1d(location, x);
+    }
 
     // --- [ glUniform2d ] ---
 
@@ -522,7 +521,9 @@ public class GL40 {
      * @param x        the uniform x value
      * @param y        the uniform y value
      */
-    public static native void glUniform2d(@NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y);
+    public static void glUniform2d(@NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y) {
+        GL40C.glUniform2d(location, x, y);
+    }
 
     // --- [ glUniform3d ] ---
 
@@ -536,7 +537,9 @@ public class GL40 {
      * @param y        the uniform y value
      * @param z        the uniform z value
      */
-    public static native void glUniform3d(@NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z);
+    public static void glUniform3d(@NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z) {
+        GL40C.glUniform3d(location, x, y, z);
+    }
 
     // --- [ glUniform4d ] ---
 
@@ -551,7 +554,9 @@ public class GL40 {
      * @param z        the uniform z value
      * @param w        the uniform w value
      */
-    public static native void glUniform4d(@NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w);
+    public static void glUniform4d(@NativeType("GLint") int location, @NativeType("GLdouble") double x, @NativeType("GLdouble") double y, @NativeType("GLdouble") double z, @NativeType("GLdouble") double w) {
+        GL40C.glUniform4d(location, x, y, z, w);
+    }
 
     // --- [ glUniform1dv ] ---
 
@@ -560,7 +565,9 @@ public class GL40 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglUniform1dv(int location, int count, long value);
+    public static void nglUniform1dv(int location, int count, long value) {
+        GL40C.nglUniform1dv(location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -571,7 +578,7 @@ public class GL40 {
      * @param value    a pointer to an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glUniform1dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniform1dv(location, value.remaining(), memAddress(value));
+        GL40C.glUniform1dv(location, value);
     }
 
     // --- [ glUniform2dv ] ---
@@ -581,7 +588,9 @@ public class GL40 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglUniform2dv(int location, int count, long value);
+    public static void nglUniform2dv(int location, int count, long value) {
+        GL40C.nglUniform2dv(location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -592,7 +601,7 @@ public class GL40 {
      * @param value    a pointer to an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glUniform2dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniform2dv(location, value.remaining() >> 1, memAddress(value));
+        GL40C.glUniform2dv(location, value);
     }
 
     // --- [ glUniform3dv ] ---
@@ -602,7 +611,9 @@ public class GL40 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglUniform3dv(int location, int count, long value);
+    public static void nglUniform3dv(int location, int count, long value) {
+        GL40C.nglUniform3dv(location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -613,7 +624,7 @@ public class GL40 {
      * @param value    a pointer to an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glUniform3dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniform3dv(location, value.remaining() / 3, memAddress(value));
+        GL40C.glUniform3dv(location, value);
     }
 
     // --- [ glUniform4dv ] ---
@@ -623,7 +634,9 @@ public class GL40 {
      *
      * @param count the number of elements that are to be modified. This should be 1 if the targeted uniform variable is not an array, and 1 or more if it is an array.
      */
-    public static native void nglUniform4dv(int location, int count, long value);
+    public static void nglUniform4dv(int location, int count, long value) {
+        GL40C.nglUniform4dv(location, count, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -634,7 +647,7 @@ public class GL40 {
      * @param value    a pointer to an array of {@code count} values that will be used to update the specified uniform variable
      */
     public static void glUniform4dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniform4dv(location, value.remaining() >> 2, memAddress(value));
+        GL40C.glUniform4dv(location, value);
     }
 
     // --- [ glUniformMatrix2dv ] ---
@@ -644,7 +657,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix2dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix2dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix2dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -656,7 +671,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix2dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix2dv(location, value.remaining() >> 2, transpose, memAddress(value));
+        GL40C.glUniformMatrix2dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix3dv ] ---
@@ -666,7 +681,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix3dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix3dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix3dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -678,7 +695,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix3dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix3dv(location, value.remaining() / 9, transpose, memAddress(value));
+        GL40C.glUniformMatrix3dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix4dv ] ---
@@ -688,7 +705,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix4dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix4dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix4dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -700,7 +719,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix4dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix4dv(location, value.remaining() >> 4, transpose, memAddress(value));
+        GL40C.glUniformMatrix4dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix2x3dv ] ---
@@ -710,7 +729,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix2x3dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix2x3dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix2x3dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -722,7 +743,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix2x3dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix2x3dv(location, value.remaining() / 6, transpose, memAddress(value));
+        GL40C.glUniformMatrix2x3dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix2x4dv ] ---
@@ -732,7 +753,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix2x4dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix2x4dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix2x4dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -744,7 +767,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix2x4dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix2x4dv(location, value.remaining() >> 3, transpose, memAddress(value));
+        GL40C.glUniformMatrix2x4dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix3x2dv ] ---
@@ -754,7 +777,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix3x2dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix3x2dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix3x2dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -766,7 +791,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix3x2dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix3x2dv(location, value.remaining() / 6, transpose, memAddress(value));
+        GL40C.glUniformMatrix3x2dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix3x4dv ] ---
@@ -776,7 +801,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix3x4dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix3x4dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix3x4dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -788,7 +815,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix3x4dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix3x4dv(location, value.remaining() / 12, transpose, memAddress(value));
+        GL40C.glUniformMatrix3x4dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix4x2dv ] ---
@@ -798,7 +825,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix4x2dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix4x2dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix4x2dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -810,7 +839,7 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix4x2dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix4x2dv(location, value.remaining() >> 3, transpose, memAddress(value));
+        GL40C.glUniformMatrix4x2dv(location, transpose, value);
     }
 
     // --- [ glUniformMatrix4x3dv ] ---
@@ -820,7 +849,9 @@ public class GL40 {
      *
      * @param count the number of matrices that are to be modified. This should be 1 if the targeted uniform variable is not an array of matrices, and 1 or more if it is an array of matrices.
      */
-    public static native void nglUniformMatrix4x3dv(int location, int count, boolean transpose, long value);
+    public static void nglUniformMatrix4x3dv(int location, int count, boolean transpose, long value) {
+        GL40C.nglUniformMatrix4x3dv(location, count, transpose, value);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glUniform">Reference Page</a></p>
@@ -832,13 +863,15 @@ public class GL40 {
      * @param value     a pointer to an array of {@code count} values that will be used to update the specified uniform matrix variable
      */
     public static void glUniformMatrix4x3dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") DoubleBuffer value) {
-        nglUniformMatrix4x3dv(location, value.remaining() / 12, transpose, memAddress(value));
+        GL40C.glUniformMatrix4x3dv(location, transpose, value);
     }
 
     // --- [ glGetUniformdv ] ---
 
     /** Unsafe version of: {@link #glGetUniformdv GetUniformdv} */
-    public static native void nglGetUniformdv(int program, int location, long params);
+    public static void nglGetUniformdv(int program, int location, long params) {
+        GL40C.nglGetUniformdv(program, location, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetUniform">Reference Page</a></p>
@@ -850,10 +883,7 @@ public class GL40 {
      * @param params   the value of the specified uniform variable
      */
     public static void glGetUniformdv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble *") DoubleBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetUniformdv(program, location, memAddress(params));
+        GL40C.glGetUniformdv(program, location, params);
     }
 
     /**
@@ -866,14 +896,7 @@ public class GL40 {
      */
     @NativeType("void")
     public static double glGetUniformd(@NativeType("GLuint") int program, @NativeType("GLint") int location) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            DoubleBuffer params = stack.callocDouble(1);
-            nglGetUniformdv(program, location, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetUniformd(program, location);
     }
 
     // --- [ glMinSampleShading ] ---
@@ -885,28 +908,15 @@ public class GL40 {
      *
      * @param value the rate at which samples are shaded within each covered pixel
      */
-    public static native void glMinSampleShading(@NativeType("GLfloat") float value);
+    public static void glMinSampleShading(@NativeType("GLfloat") float value) {
+        GL40C.glMinSampleShading(value);
+    }
 
     // --- [ glGetSubroutineUniformLocation ] ---
 
     /** Unsafe version of: {@link #glGetSubroutineUniformLocation GetSubroutineUniformLocation} */
-    public static native int nglGetSubroutineUniformLocation(int program, int shadertype, long name);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glGetSubroutineUniformLocation">Reference Page</a></p>
-     * 
-     * Retrieves the location of a subroutine uniform of a given shader stage within a program.
-     *
-     * @param program    the name of the program containing shader stage
-     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param name       the name of the subroutine uniform whose index to query.
-     */
-    @NativeType("GLint")
-    public static int glGetSubroutineUniformLocation(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLchar const *") ByteBuffer name) {
-        if (CHECKS) {
-            checkNT1(name);
-        }
-        return nglGetSubroutineUniformLocation(program, shadertype, memAddress(name));
+    public static int nglGetSubroutineUniformLocation(int program, int shadertype, long name) {
+        return GL40C.nglGetSubroutineUniformLocation(program, shadertype, name);
     }
 
     /**
@@ -915,40 +925,33 @@ public class GL40 {
      * Retrieves the location of a subroutine uniform of a given shader stage within a program.
      *
      * @param program    the name of the program containing shader stage
-     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param name       the name of the subroutine uniform whose index to query.
+     */
+    @NativeType("GLint")
+    public static int glGetSubroutineUniformLocation(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLchar const *") ByteBuffer name) {
+        return GL40C.glGetSubroutineUniformLocation(program, shadertype, name);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glGetSubroutineUniformLocation">Reference Page</a></p>
+     * 
+     * Retrieves the location of a subroutine uniform of a given shader stage within a program.
+     *
+     * @param program    the name of the program containing shader stage
+     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param name       the name of the subroutine uniform whose index to query.
      */
     @NativeType("GLint")
     public static int glGetSubroutineUniformLocation(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLchar const *") CharSequence name) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            ByteBuffer nameEncoded = stack.ASCII(name);
-            return nglGetSubroutineUniformLocation(program, shadertype, memAddress(nameEncoded));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetSubroutineUniformLocation(program, shadertype, name);
     }
 
     // --- [ glGetSubroutineIndex ] ---
 
     /** Unsafe version of: {@link #glGetSubroutineIndex GetSubroutineIndex} */
-    public static native int nglGetSubroutineIndex(int program, int shadertype, long name);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glGetSubroutineIndex">Reference Page</a></p>
-     * 
-     * Retrieves the index of a subroutine function of a given shader stage within a program.
-     *
-     * @param program    the name of the program containing shader stage
-     * @param shadertype the shader stage from which to query for subroutine function index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param name       the name of the subroutine function whose index to query
-     */
-    @NativeType("GLuint")
-    public static int glGetSubroutineIndex(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLchar const *") ByteBuffer name) {
-        if (CHECKS) {
-            checkNT1(name);
-        }
-        return nglGetSubroutineIndex(program, shadertype, memAddress(name));
+    public static int nglGetSubroutineIndex(int program, int shadertype, long name) {
+        return GL40C.nglGetSubroutineIndex(program, shadertype, name);
     }
 
     /**
@@ -957,41 +960,33 @@ public class GL40 {
      * Retrieves the index of a subroutine function of a given shader stage within a program.
      *
      * @param program    the name of the program containing shader stage
-     * @param shadertype the shader stage from which to query for subroutine function index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for subroutine function index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param name       the name of the subroutine function whose index to query
+     */
+    @NativeType("GLuint")
+    public static int glGetSubroutineIndex(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLchar const *") ByteBuffer name) {
+        return GL40C.glGetSubroutineIndex(program, shadertype, name);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glGetSubroutineIndex">Reference Page</a></p>
+     * 
+     * Retrieves the index of a subroutine function of a given shader stage within a program.
+     *
+     * @param program    the name of the program containing shader stage
+     * @param shadertype the shader stage from which to query for subroutine function index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param name       the name of the subroutine function whose index to query
      */
     @NativeType("GLuint")
     public static int glGetSubroutineIndex(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLchar const *") CharSequence name) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            ByteBuffer nameEncoded = stack.ASCII(name);
-            return nglGetSubroutineIndex(program, shadertype, memAddress(nameEncoded));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetSubroutineIndex(program, shadertype, name);
     }
 
     // --- [ glGetActiveSubroutineUniformiv ] ---
 
     /** Unsafe version of: {@link #glGetActiveSubroutineUniformiv GetActiveSubroutineUniformiv} */
-    public static native void nglGetActiveSubroutineUniformiv(int program, int shadertype, int index, int pname, long values);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glGetActiveSubroutineUniform">Reference Page</a></p>
-     * 
-     * Queries a property of an active shader subroutine uniform.
-     *
-     * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param index      the index of the shader subroutine uniform
-     * @param pname      the parameter of the shader subroutine uniform to query. One of:<br><table><tr><td>{@link #GL_NUM_COMPATIBLE_SUBROUTINES NUM_COMPATIBLE_SUBROUTINES}</td><td>{@link #GL_COMPATIBLE_SUBROUTINES COMPATIBLE_SUBROUTINES}</td><td>{@link GL31#GL_UNIFORM_SIZE UNIFORM_SIZE}</td><td>{@link GL31#GL_UNIFORM_NAME_LENGTH UNIFORM_NAME_LENGTH}</td></tr></table>
-     * @param values     the address of a buffer into which the queried value or values will be placed
-     */
-    public static void glGetActiveSubroutineUniformiv(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer values) {
-        if (CHECKS) {
-            check(values, 1);
-        }
-        nglGetActiveSubroutineUniformiv(program, shadertype, index, pname, memAddress(values));
+    public static void nglGetActiveSubroutineUniformiv(int program, int shadertype, int index, int pname, long values) {
+        GL40C.nglGetActiveSubroutineUniformiv(program, shadertype, index, pname, values);
     }
 
     /**
@@ -1000,20 +995,28 @@ public class GL40 {
      * Queries a property of an active shader subroutine uniform.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
-     * @param pname      the parameter of the shader subroutine uniform to query. One of:<br><table><tr><td>{@link #GL_NUM_COMPATIBLE_SUBROUTINES NUM_COMPATIBLE_SUBROUTINES}</td><td>{@link #GL_COMPATIBLE_SUBROUTINES COMPATIBLE_SUBROUTINES}</td><td>{@link GL31#GL_UNIFORM_SIZE UNIFORM_SIZE}</td><td>{@link GL31#GL_UNIFORM_NAME_LENGTH UNIFORM_NAME_LENGTH}</td></tr></table>
+     * @param pname      the parameter of the shader subroutine uniform to query. One of:<br><table><tr><td>{@link GL40C#GL_NUM_COMPATIBLE_SUBROUTINES NUM_COMPATIBLE_SUBROUTINES}</td><td>{@link GL40C#GL_COMPATIBLE_SUBROUTINES COMPATIBLE_SUBROUTINES}</td><td>{@link GL31#GL_UNIFORM_SIZE UNIFORM_SIZE}</td><td>{@link GL31#GL_UNIFORM_NAME_LENGTH UNIFORM_NAME_LENGTH}</td></tr></table>
+     * @param values     the address of a buffer into which the queried value or values will be placed
+     */
+    public static void glGetActiveSubroutineUniformiv(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer values) {
+        GL40C.glGetActiveSubroutineUniformiv(program, shadertype, index, pname, values);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glGetActiveSubroutineUniform">Reference Page</a></p>
+     * 
+     * Queries a property of an active shader subroutine uniform.
+     *
+     * @param program    the name of the program containing the subroutine
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param index      the index of the shader subroutine uniform
+     * @param pname      the parameter of the shader subroutine uniform to query. One of:<br><table><tr><td>{@link GL40C#GL_NUM_COMPATIBLE_SUBROUTINES NUM_COMPATIBLE_SUBROUTINES}</td><td>{@link GL40C#GL_COMPATIBLE_SUBROUTINES COMPATIBLE_SUBROUTINES}</td><td>{@link GL31#GL_UNIFORM_SIZE UNIFORM_SIZE}</td><td>{@link GL31#GL_UNIFORM_NAME_LENGTH UNIFORM_NAME_LENGTH}</td></tr></table>
      */
     @NativeType("void")
     public static int glGetActiveSubroutineUniformi(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer values = stack.callocInt(1);
-            nglGetActiveSubroutineUniformiv(program, shadertype, index, pname, memAddress(values));
-            return values.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetActiveSubroutineUniformi(program, shadertype, index, pname);
     }
 
     // --- [ glGetActiveSubroutineUniformName ] ---
@@ -1023,7 +1026,9 @@ public class GL40 {
      *
      * @param bufsize the size of the buffer whose address is given in {@code name}
      */
-    public static native void nglGetActiveSubroutineUniformName(int program, int shadertype, int index, int bufsize, long length, long name);
+    public static void nglGetActiveSubroutineUniformName(int program, int shadertype, int index, int bufsize, long length, long name) {
+        GL40C.nglGetActiveSubroutineUniformName(program, shadertype, index, bufsize, length, name);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetActiveSubroutineUniformName">Reference Page</a></p>
@@ -1031,16 +1036,13 @@ public class GL40 {
      * Queries the name of an active shader subroutine uniform.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
      * @param length     the address of a variable into which is written the number of characters copied into {@code name}
      * @param name       the address of a buffer that will receive the name of the specified shader subroutine uniform
      */
     public static void glGetActiveSubroutineUniformName(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @Nullable @NativeType("GLsizei *") IntBuffer length, @NativeType("GLchar *") ByteBuffer name) {
-        if (CHECKS) {
-            checkSafe(length, 1);
-        }
-        nglGetActiveSubroutineUniformName(program, shadertype, index, name.remaining(), memAddressSafe(length), memAddress(name));
+        GL40C.glGetActiveSubroutineUniformName(program, shadertype, index, length, name);
     }
 
     /**
@@ -1049,21 +1051,13 @@ public class GL40 {
      * Queries the name of an active shader subroutine uniform.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
      * @param bufsize    the size of the buffer whose address is given in {@code name}
      */
     @NativeType("void")
     public static String glGetActiveSubroutineUniformName(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @NativeType("GLsizei") int bufsize) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer length = stack.ints(0);
-            ByteBuffer name = stack.malloc(bufsize);
-            nglGetActiveSubroutineUniformName(program, shadertype, index, bufsize, memAddress(length), memAddress(name));
-            return memASCII(name, length.get(0));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetActiveSubroutineUniformName(program, shadertype, index, bufsize);
     }
 
     /**
@@ -1072,7 +1066,7 @@ public class GL40 {
      * Queries the name of an active shader subroutine uniform.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
      */
     @NativeType("void")
@@ -1087,7 +1081,9 @@ public class GL40 {
      *
      * @param bufsize the size of the buffer whose address is given in {@code name}
      */
-    public static native void nglGetActiveSubroutineName(int program, int shadertype, int index, int bufsize, long length, long name);
+    public static void nglGetActiveSubroutineName(int program, int shadertype, int index, int bufsize, long length, long name) {
+        GL40C.nglGetActiveSubroutineName(program, shadertype, index, bufsize, length, name);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetActiveSubroutineName">Reference Page</a></p>
@@ -1095,16 +1091,13 @@ public class GL40 {
      * Queries the name of an active shader subroutine.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query the subroutine name. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query the subroutine name. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
      * @param length     a variable which is to receive the length of the shader subroutine uniform name
      * @param name       an array into which the name of the shader subroutine uniform will be written
      */
     public static void glGetActiveSubroutineName(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @Nullable @NativeType("GLsizei *") IntBuffer length, @NativeType("GLchar *") ByteBuffer name) {
-        if (CHECKS) {
-            checkSafe(length, 1);
-        }
-        nglGetActiveSubroutineName(program, shadertype, index, name.remaining(), memAddressSafe(length), memAddress(name));
+        GL40C.glGetActiveSubroutineName(program, shadertype, index, length, name);
     }
 
     /**
@@ -1113,21 +1106,13 @@ public class GL40 {
      * Queries the name of an active shader subroutine.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query the subroutine name. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query the subroutine name. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
      * @param bufsize    the size of the buffer whose address is given in {@code name}
      */
     @NativeType("void")
     public static String glGetActiveSubroutineName(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @NativeType("GLsizei") int bufsize) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer length = stack.ints(0);
-            ByteBuffer name = stack.malloc(bufsize);
-            nglGetActiveSubroutineName(program, shadertype, index, bufsize, memAddress(length), memAddress(name));
-            return memASCII(name, length.get(0));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetActiveSubroutineName(program, shadertype, index, bufsize);
     }
 
     /**
@@ -1136,7 +1121,7 @@ public class GL40 {
      * Queries the name of an active shader subroutine.
      *
      * @param program    the name of the program containing the subroutine
-     * @param shadertype the shader stage from which to query the subroutine name. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query the subroutine name. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param index      the index of the shader subroutine uniform
      */
     @NativeType("void")
@@ -1151,18 +1136,8 @@ public class GL40 {
      *
      * @param count the number of uniform indices stored in {@code indices}
      */
-    public static native void nglUniformSubroutinesuiv(int shadertype, int count, long indices);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glUniformSubroutines">Reference Page</a></p>
-     * 
-     * Loads active subroutine uniforms.
-     *
-     * @param shadertype the shader stage to update. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param indices    an array holding the indices to load into the shader subroutine variables
-     */
-    public static void glUniformSubroutinesuiv(@NativeType("GLenum") int shadertype, @NativeType("GLuint const *") IntBuffer indices) {
-        nglUniformSubroutinesuiv(shadertype, indices.remaining(), memAddress(indices));
+    public static void nglUniformSubroutinesuiv(int shadertype, int count, long indices) {
+        GL40C.nglUniformSubroutinesuiv(shadertype, count, indices);
     }
 
     /**
@@ -1170,37 +1145,29 @@ public class GL40 {
      * 
      * Loads active subroutine uniforms.
      *
-     * @param shadertype the shader stage to update. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage to update. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param indices    an array holding the indices to load into the shader subroutine variables
+     */
+    public static void glUniformSubroutinesuiv(@NativeType("GLenum") int shadertype, @NativeType("GLuint const *") IntBuffer indices) {
+        GL40C.glUniformSubroutinesuiv(shadertype, indices);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glUniformSubroutines">Reference Page</a></p>
+     * 
+     * Loads active subroutine uniforms.
+     *
+     * @param shadertype the shader stage to update. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      */
     public static void glUniformSubroutinesui(@NativeType("GLenum") int shadertype, @NativeType("GLuint const *") int index) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer indices = stack.ints(index);
-            nglUniformSubroutinesuiv(shadertype, 1, memAddress(indices));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL40C.glUniformSubroutinesui(shadertype, index);
     }
 
     // --- [ glGetUniformSubroutineuiv ] ---
 
     /** Unsafe version of: {@link #glGetUniformSubroutineuiv GetUniformSubroutineuiv} */
-    public static native void nglGetUniformSubroutineuiv(int shadertype, int location, long params);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glGetUniformSubroutine">Reference Page</a></p>
-     * 
-     * Retrieves the value of a subroutine uniform of a given shader stage of the current program.
-     *
-     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param location   the location of the subroutine uniform
-     * @param params     a variable to receive the value or values of the subroutine uniform
-     */
-    public static void glGetUniformSubroutineuiv(@NativeType("GLenum") int shadertype, @NativeType("GLint") int location, @NativeType("GLuint *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetUniformSubroutineuiv(shadertype, location, memAddress(params));
+    public static void nglGetUniformSubroutineuiv(int shadertype, int location, long params) {
+        GL40C.nglGetUniformSubroutineuiv(shadertype, location, params);
     }
 
     /**
@@ -1208,41 +1175,32 @@ public class GL40 {
      * 
      * Retrieves the value of a subroutine uniform of a given shader stage of the current program.
      *
-     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param location   the location of the subroutine uniform
+     * @param params     a variable to receive the value or values of the subroutine uniform
+     */
+    public static void glGetUniformSubroutineuiv(@NativeType("GLenum") int shadertype, @NativeType("GLint") int location, @NativeType("GLuint *") IntBuffer params) {
+        GL40C.glGetUniformSubroutineuiv(shadertype, location, params);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glGetUniformSubroutine">Reference Page</a></p>
+     * 
+     * Retrieves the value of a subroutine uniform of a given shader stage of the current program.
+     *
+     * @param shadertype the shader stage from which to query for subroutine uniform index. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
      * @param location   the location of the subroutine uniform
      */
     @NativeType("void")
     public static int glGetUniformSubroutineui(@NativeType("GLenum") int shadertype, @NativeType("GLint") int location) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer params = stack.callocInt(1);
-            nglGetUniformSubroutineuiv(shadertype, location, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetUniformSubroutineui(shadertype, location);
     }
 
     // --- [ glGetProgramStageiv ] ---
 
     /** Unsafe version of: {@link #glGetProgramStageiv GetProgramStageiv} */
-    public static native void nglGetProgramStageiv(int program, int shadertype, int pname, long values);
-
-    /**
-     * <p><a target="_blank" href="http://docs.gl/gl4/glGetProgramStage">Reference Page</a></p>
-     * 
-     * Retrieves properties of a program object corresponding to a specified shader stage.
-     *
-     * @param program    the name of the program containing shader stage
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param pname      the parameter of the shader to query. One of:<br><table><tr><td>{@link #GL_ACTIVE_SUBROUTINES ACTIVE_SUBROUTINES}</td><td>{@link #GL_ACTIVE_SUBROUTINE_UNIFORMS ACTIVE_SUBROUTINE_UNIFORMS}</td></tr><tr><td>{@link #GL_ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS}</td><td>{@link #GL_ACTIVE_SUBROUTINE_MAX_LENGTH ACTIVE_SUBROUTINE_MAX_LENGTH}</td></tr><tr><td>{@link #GL_ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH}</td></tr></table>
-     * @param values     a variable into which the queried value or values will be placed
-     */
-    public static void glGetProgramStageiv(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer values) {
-        if (CHECKS) {
-            check(values, 1);
-        }
-        nglGetProgramStageiv(program, shadertype, pname, memAddress(values));
+    public static void nglGetProgramStageiv(int program, int shadertype, int pname, long values) {
+        GL40C.nglGetProgramStageiv(program, shadertype, pname, values);
     }
 
     /**
@@ -1251,19 +1209,26 @@ public class GL40 {
      * Retrieves properties of a program object corresponding to a specified shader stage.
      *
      * @param program    the name of the program containing shader stage
-     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link #GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link #GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
-     * @param pname      the parameter of the shader to query. One of:<br><table><tr><td>{@link #GL_ACTIVE_SUBROUTINES ACTIVE_SUBROUTINES}</td><td>{@link #GL_ACTIVE_SUBROUTINE_UNIFORMS ACTIVE_SUBROUTINE_UNIFORMS}</td></tr><tr><td>{@link #GL_ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS}</td><td>{@link #GL_ACTIVE_SUBROUTINE_MAX_LENGTH ACTIVE_SUBROUTINE_MAX_LENGTH}</td></tr><tr><td>{@link #GL_ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH}</td></tr></table>
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param pname      the parameter of the shader to query. One of:<br><table><tr><td>{@link GL40C#GL_ACTIVE_SUBROUTINES ACTIVE_SUBROUTINES}</td><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_UNIFORMS ACTIVE_SUBROUTINE_UNIFORMS}</td></tr><tr><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS}</td><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_MAX_LENGTH ACTIVE_SUBROUTINE_MAX_LENGTH}</td></tr><tr><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH}</td></tr></table>
+     * @param values     a variable into which the queried value or values will be placed
+     */
+    public static void glGetProgramStageiv(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer values) {
+        GL40C.glGetProgramStageiv(program, shadertype, pname, values);
+    }
+
+    /**
+     * <p><a target="_blank" href="http://docs.gl/gl4/glGetProgramStage">Reference Page</a></p>
+     * 
+     * Retrieves properties of a program object corresponding to a specified shader stage.
+     *
+     * @param program    the name of the program containing shader stage
+     * @param shadertype the shader stage from which to query for the subroutine parameter. One of:<br><table><tr><td>{@link GL20#GL_VERTEX_SHADER VERTEX_SHADER}</td><td>{@link GL20#GL_FRAGMENT_SHADER FRAGMENT_SHADER}</td><td>{@link GL32#GL_GEOMETRY_SHADER GEOMETRY_SHADER}</td><td>{@link GL40C#GL_TESS_CONTROL_SHADER TESS_CONTROL_SHADER}</td></tr><tr><td>{@link GL40C#GL_TESS_EVALUATION_SHADER TESS_EVALUATION_SHADER}</td></tr></table>
+     * @param pname      the parameter of the shader to query. One of:<br><table><tr><td>{@link GL40C#GL_ACTIVE_SUBROUTINES ACTIVE_SUBROUTINES}</td><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_UNIFORMS ACTIVE_SUBROUTINE_UNIFORMS}</td></tr><tr><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS ACTIVE_SUBROUTINE_UNIFORM_LOCATIONS}</td><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_MAX_LENGTH ACTIVE_SUBROUTINE_MAX_LENGTH}</td></tr><tr><td>{@link GL40C#GL_ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH ACTIVE_SUBROUTINE_UNIFORM_MAX_LENGTH}</td></tr></table>
      */
     @NativeType("void")
     public static int glGetProgramStagei(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer values = stack.callocInt(1);
-            nglGetProgramStageiv(program, shadertype, pname, memAddress(values));
-            return values.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetProgramStagei(program, shadertype, pname);
     }
 
     // --- [ glPatchParameteri ] ---
@@ -1273,31 +1238,30 @@ public class GL40 {
      * 
      * Specifies the integer value of the specified parameter for patch primitives.
      *
-     * @param pname the name of the parameter to set. Must be:<br><table><tr><td>{@link #GL_PATCH_VERTICES PATCH_VERTICES}</td></tr></table>
+     * @param pname the name of the parameter to set. Must be:<br><table><tr><td>{@link GL40C#GL_PATCH_VERTICES PATCH_VERTICES}</td></tr></table>
      * @param value the new value for the parameter given by {@code pname}
      */
-    public static native void glPatchParameteri(@NativeType("GLenum") int pname, @NativeType("GLint") int value);
+    public static void glPatchParameteri(@NativeType("GLenum") int pname, @NativeType("GLint") int value) {
+        GL40C.glPatchParameteri(pname, value);
+    }
 
     // --- [ glPatchParameterfv ] ---
 
     /** Unsafe version of: {@link #glPatchParameterfv PatchParameterfv} */
-    public static native void nglPatchParameterfv(int pname, long values);
+    public static void nglPatchParameterfv(int pname, long values) {
+        GL40C.nglPatchParameterfv(pname, values);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glPatchParameter">Reference Page</a></p>
      * 
      * Specifies an array of float values for the specified parameter for patch primitives.
      *
-     * @param pname  the name of the parameter to set. One of:<br><table><tr><td>{@link #GL_PATCH_DEFAULT_OUTER_LEVEL PATCH_DEFAULT_OUTER_LEVEL}</td><td>{@link #GL_PATCH_DEFAULT_INNER_LEVEL PATCH_DEFAULT_INNER_LEVEL}</td></tr></table>
+     * @param pname  the name of the parameter to set. One of:<br><table><tr><td>{@link GL40C#GL_PATCH_DEFAULT_OUTER_LEVEL PATCH_DEFAULT_OUTER_LEVEL}</td><td>{@link GL40C#GL_PATCH_DEFAULT_INNER_LEVEL PATCH_DEFAULT_INNER_LEVEL}</td></tr></table>
      * @param values an array containing the new values for the parameter given by {@code pname}
      */
     public static void glPatchParameterfv(@NativeType("GLenum") int pname, @NativeType("GLfloat const *") FloatBuffer values) {
-        if (CHECKS) {
-            if (DEBUG) {
-                check(values, GL11.glGetInteger(GL_PATCH_VERTICES));
-            }
-        }
-        nglPatchParameterfv(pname, memAddress(values));
+        GL40C.glPatchParameterfv(pname, values);
     }
 
     // --- [ glBindTransformFeedback ] ---
@@ -1307,10 +1271,12 @@ public class GL40 {
      * 
      * Binds a transform feedback object.
      *
-     * @param target the target to which to bind the transform feedback object {@code id}. Must be:<br><table><tr><td>{@link #GL_TRANSFORM_FEEDBACK TRANSFORM_FEEDBACK}</td></tr></table>
+     * @param target the target to which to bind the transform feedback object {@code id}. Must be:<br><table><tr><td>{@link GL40C#GL_TRANSFORM_FEEDBACK TRANSFORM_FEEDBACK}</td></tr></table>
      * @param id     the name of a transform feedback object
      */
-    public static native void glBindTransformFeedback(@NativeType("GLenum") int target, @NativeType("GLuint") int id);
+    public static void glBindTransformFeedback(@NativeType("GLenum") int target, @NativeType("GLuint") int id) {
+        GL40C.glBindTransformFeedback(target, id);
+    }
 
     // --- [ glDeleteTransformFeedbacks ] ---
 
@@ -1319,7 +1285,9 @@ public class GL40 {
      *
      * @param n the number of transform feedback objects to delete
      */
-    public static native void nglDeleteTransformFeedbacks(int n, long ids);
+    public static void nglDeleteTransformFeedbacks(int n, long ids) {
+        GL40C.nglDeleteTransformFeedbacks(n, ids);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glDeleteTransformFeedbacks">Reference Page</a></p>
@@ -1329,7 +1297,7 @@ public class GL40 {
      * @param ids an array of names of transform feedback objects to delete
      */
     public static void glDeleteTransformFeedbacks(@NativeType("GLuint const *") IntBuffer ids) {
-        nglDeleteTransformFeedbacks(ids.remaining(), memAddress(ids));
+        GL40C.glDeleteTransformFeedbacks(ids);
     }
 
     /**
@@ -1338,13 +1306,7 @@ public class GL40 {
      * Deletes transform feedback objects.
      */
     public static void glDeleteTransformFeedbacks(@NativeType("GLuint const *") int id) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer ids = stack.ints(id);
-            nglDeleteTransformFeedbacks(1, memAddress(ids));
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        GL40C.glDeleteTransformFeedbacks(id);
     }
 
     // --- [ glGenTransformFeedbacks ] ---
@@ -1354,7 +1316,9 @@ public class GL40 {
      *
      * @param n the number of transform feedback object names to reserve
      */
-    public static native void nglGenTransformFeedbacks(int n, long ids);
+    public static void nglGenTransformFeedbacks(int n, long ids) {
+        GL40C.nglGenTransformFeedbacks(n, ids);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGenTransformFeedbacks">Reference Page</a></p>
@@ -1364,7 +1328,7 @@ public class GL40 {
      * @param ids an array of into which the reserved names will be written
      */
     public static void glGenTransformFeedbacks(@NativeType("GLuint *") IntBuffer ids) {
-        nglGenTransformFeedbacks(ids.remaining(), memAddress(ids));
+        GL40C.glGenTransformFeedbacks(ids);
     }
 
     /**
@@ -1374,14 +1338,7 @@ public class GL40 {
      */
     @NativeType("void")
     public static int glGenTransformFeedbacks() {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer ids = stack.callocInt(1);
-            nglGenTransformFeedbacks(1, memAddress(ids));
-            return ids.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGenTransformFeedbacks();
     }
 
     // --- [ glIsTransformFeedback ] ---
@@ -1394,7 +1351,9 @@ public class GL40 {
      * @param id a value that may be the name of a transform feedback object
      */
     @NativeType("GLboolean")
-    public static native boolean glIsTransformFeedback(@NativeType("GLuint") int id);
+    public static boolean glIsTransformFeedback(@NativeType("GLuint") int id) {
+        return GL40C.glIsTransformFeedback(id);
+    }
 
     // --- [ glPauseTransformFeedback ] ---
 
@@ -1408,12 +1367,14 @@ public class GL40 {
      * is generated by PauseTransformFeedback if the currently bound transform feedback is not active or is paused.</p>
      * 
      * <p>When transform feedback is active and not paused, all geometric primitives generated must be compatible with the value of {@code primitiveMode} passed
-     * to {@link GL30#glBeginTransformFeedback BeginTransformFeedback}. The error {@link GL11#GL_INVALID_OPERATION INVALID_OPERATION} is generated by {@link GL11#glBegin Begin} or any operation that implicitly calls {@link GL11#glBegin Begin}
-     * (such as {@link GL11#glDrawElements DrawElements}) if {@code mode} is not one of the allowed modes. If a geometry shader is active, its output primitive type is used instead
+     * to {@link GL30C#glBeginTransformFeedback BeginTransformFeedback}. The error {@link GL11#GL_INVALID_OPERATION INVALID_OPERATION} is generated by {@link GL11#glBegin Begin} or any operation that implicitly calls {@link GL11#glBegin Begin}
+     * (such as {@link GL11C#glDrawElements DrawElements}) if {@code mode} is not one of the allowed modes. If a geometry shader is active, its output primitive type is used instead
      * of the {@code mode} parameter passed to {@link GL11#glBegin Begin} for the purposes of this error check. Any primitive type may be used while transform feedback is
      * paused.</p>
      */
-    public static native void glPauseTransformFeedback();
+    public static void glPauseTransformFeedback() {
+        GL40C.glPauseTransformFeedback();
+    }
 
     // --- [ glResumeTransformFeedback ] ---
 
@@ -1424,7 +1385,9 @@ public class GL40 {
      * 
      * <p>The error {@link GL11#GL_INVALID_OPERATION INVALID_OPERATION} is generated by {@link #glResumeTransformFeedback ResumeTransformFeedback} if the currently bound transform feedback is not active or is not paused.</p>
      */
-    public static native void glResumeTransformFeedback();
+    public static void glResumeTransformFeedback() {
+        GL40C.glResumeTransformFeedback();
+    }
 
     // --- [ glDrawTransformFeedback ] ---
 
@@ -1433,10 +1396,12 @@ public class GL40 {
      * 
      * Render primitives using a count derived from a transform feedback object.
      *
-     * @param mode what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param id   the name of a transform feedback object from which to retrieve a primitive count
      */
-    public static native void glDrawTransformFeedback(@NativeType("GLenum") int mode, @NativeType("GLuint") int id);
+    public static void glDrawTransformFeedback(@NativeType("GLenum") int mode, @NativeType("GLuint") int id) {
+        GL40C.glDrawTransformFeedback(mode, id);
+    }
 
     // --- [ glDrawTransformFeedbackStream ] ---
 
@@ -1445,11 +1410,13 @@ public class GL40 {
      * 
      * Renders primitives using a count derived from a specifed stream of a transform feedback object.
      *
-     * @param mode   what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td></tr><tr><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td><td>{@link GL11#GL_QUADS QUADS}</td><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td></tr><tr><td>{@link #GL_PATCHES PATCHES}</td></tr></table>
+     * @param mode   what kind of primitives to render. One of:<br><table><tr><td>{@link GL11#GL_POINTS POINTS}</td><td>{@link GL11#GL_LINE_STRIP LINE_STRIP}</td><td>{@link GL11#GL_LINE_LOOP LINE_LOOP}</td><td>{@link GL11#GL_LINES LINES}</td><td>{@link GL11#GL_TRIANGLE_STRIP TRIANGLE_STRIP}</td><td>{@link GL11#GL_TRIANGLE_FAN TRIANGLE_FAN}</td><td>{@link GL11#GL_TRIANGLES TRIANGLES}</td></tr><tr><td>{@link GL32#GL_LINES_ADJACENCY LINES_ADJACENCY}</td><td>{@link GL32#GL_LINE_STRIP_ADJACENCY LINE_STRIP_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLES_ADJACENCY TRIANGLES_ADJACENCY}</td><td>{@link GL32#GL_TRIANGLE_STRIP_ADJACENCY TRIANGLE_STRIP_ADJACENCY}</td><td>{@link GL40C#GL_PATCHES PATCHES}</td><td>{@link GL11#GL_POLYGON POLYGON}</td><td>{@link GL11#GL_QUADS QUADS}</td></tr><tr><td>{@link GL11#GL_QUAD_STRIP QUAD_STRIP}</td></tr></table>
      * @param id     the name of a transform feedback object from which to retrieve a primitive count
      * @param stream the index of the transform feedback stream from which to retrieve a primitive count
      */
-    public static native void glDrawTransformFeedbackStream(@NativeType("GLenum") int mode, @NativeType("GLuint") int id, @NativeType("GLuint") int stream);
+    public static void glDrawTransformFeedbackStream(@NativeType("GLenum") int mode, @NativeType("GLuint") int id, @NativeType("GLuint") int stream) {
+        GL40C.glDrawTransformFeedbackStream(mode, id, stream);
+    }
 
     // --- [ glBeginQueryIndexed ] ---
 
@@ -1462,7 +1429,9 @@ public class GL40 {
      * @param index  the index of the query target upon which to begin the query
      * @param id     the name of a query object
      */
-    public static native void glBeginQueryIndexed(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLuint") int id);
+    public static void glBeginQueryIndexed(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLuint") int id) {
+        GL40C.glBeginQueryIndexed(target, index, id);
+    }
 
     // --- [ glEndQueryIndexed ] ---
 
@@ -1474,12 +1443,16 @@ public class GL40 {
      * @param target the target type of query object to be concluded. One of:<br><table><tr><td>{@link GL15#GL_SAMPLES_PASSED SAMPLES_PASSED}</td><td>{@link GL30#GL_PRIMITIVES_GENERATED PRIMITIVES_GENERATED}</td><td>{@link GL30#GL_TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN TRANSFORM_FEEDBACK_PRIMITIVES_WRITTEN}</td><td>{@link GL33#GL_TIME_ELAPSED TIME_ELAPSED}</td></tr><tr><td>{@link GL33#GL_TIMESTAMP TIMESTAMP}</td><td>{@link GL33#GL_ANY_SAMPLES_PASSED ANY_SAMPLES_PASSED}</td><td>{@link GL43#GL_ANY_SAMPLES_PASSED_CONSERVATIVE ANY_SAMPLES_PASSED_CONSERVATIVE}</td></tr></table>
      * @param index  the index of the query target upon which to end the query
      */
-    public static native void glEndQueryIndexed(@NativeType("GLenum") int target, @NativeType("GLuint") int index);
+    public static void glEndQueryIndexed(@NativeType("GLenum") int target, @NativeType("GLuint") int index) {
+        GL40C.glEndQueryIndexed(target, index);
+    }
 
     // --- [ glGetQueryIndexediv ] ---
 
     /** Unsafe version of: {@link #glGetQueryIndexediv GetQueryIndexediv} */
-    public static native void nglGetQueryIndexediv(int target, int index, int pname, long params);
+    public static void nglGetQueryIndexediv(int target, int index, int pname, long params) {
+        GL40C.nglGetQueryIndexediv(target, index, pname, params);
+    }
 
     /**
      * <p><a target="_blank" href="http://docs.gl/gl4/glGetQueryIndexed">Reference Page</a></p>
@@ -1492,10 +1465,7 @@ public class GL40 {
      * @param params the requested data
      */
     public static void glGetQueryIndexediv(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLint *") IntBuffer params) {
-        if (CHECKS) {
-            check(params, 1);
-        }
-        nglGetQueryIndexediv(target, index, pname, memAddress(params));
+        GL40C.glGetQueryIndexediv(target, index, pname, params);
     }
 
     /**
@@ -1509,14 +1479,7 @@ public class GL40 {
      */
     @NativeType("void")
     public static int glGetQueryIndexedi(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLenum") int pname) {
-        MemoryStack stack = stackGet(); int stackPointer = stack.getPointer();
-        try {
-            IntBuffer params = stack.callocInt(1);
-            nglGetQueryIndexediv(target, index, pname, memAddress(params));
-            return params.get(0);
-        } finally {
-            stack.setPointer(stackPointer);
-        }
+        return GL40C.glGetQueryIndexedi(target, index, pname);
     }
 
     /**
@@ -1525,12 +1488,7 @@ public class GL40 {
      * Array version of: {@link #glDrawArraysIndirect DrawArraysIndirect}
      */
     public static void glDrawArraysIndirect(@NativeType("GLenum") int mode, @NativeType("void const *") int[] indirect) {
-        long __functionAddress = GL.getICD().glDrawArraysIndirect;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(indirect, (4 * 4) >> 2);
-        }
-        callPV(__functionAddress, mode, indirect);
+        GL40C.glDrawArraysIndirect(mode, indirect);
     }
 
     /**
@@ -1539,12 +1497,7 @@ public class GL40 {
      * Array version of: {@link #glDrawElementsIndirect DrawElementsIndirect}
      */
     public static void glDrawElementsIndirect(@NativeType("GLenum") int mode, @NativeType("GLenum") int type, @NativeType("void const *") int[] indirect) {
-        long __functionAddress = GL.getICD().glDrawElementsIndirect;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(indirect, (5 * 4) >> 2);
-        }
-        callPV(__functionAddress, mode, type, indirect);
+        GL40C.glDrawElementsIndirect(mode, type, indirect);
     }
 
     /**
@@ -1553,11 +1506,7 @@ public class GL40 {
      * Array version of: {@link #glUniform1dv Uniform1dv}
      */
     public static void glUniform1dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniform1dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length, value);
+        GL40C.glUniform1dv(location, value);
     }
 
     /**
@@ -1566,11 +1515,7 @@ public class GL40 {
      * Array version of: {@link #glUniform2dv Uniform2dv}
      */
     public static void glUniform2dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniform2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length >> 1, value);
+        GL40C.glUniform2dv(location, value);
     }
 
     /**
@@ -1579,11 +1524,7 @@ public class GL40 {
      * Array version of: {@link #glUniform3dv Uniform3dv}
      */
     public static void glUniform3dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniform3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length / 3, value);
+        GL40C.glUniform3dv(location, value);
     }
 
     /**
@@ -1592,11 +1533,7 @@ public class GL40 {
      * Array version of: {@link #glUniform4dv Uniform4dv}
      */
     public static void glUniform4dv(@NativeType("GLint") int location, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniform4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length >> 2, value);
+        GL40C.glUniform4dv(location, value);
     }
 
     /**
@@ -1605,11 +1542,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix2dv UniformMatrix2dv}
      */
     public static void glUniformMatrix2dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length >> 2, transpose, value);
+        GL40C.glUniformMatrix2dv(location, transpose, value);
     }
 
     /**
@@ -1618,11 +1551,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix3dv UniformMatrix3dv}
      */
     public static void glUniformMatrix3dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length / 9, transpose, value);
+        GL40C.glUniformMatrix3dv(location, transpose, value);
     }
 
     /**
@@ -1631,11 +1560,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix4dv UniformMatrix4dv}
      */
     public static void glUniformMatrix4dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length >> 4, transpose, value);
+        GL40C.glUniformMatrix4dv(location, transpose, value);
     }
 
     /**
@@ -1644,11 +1569,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix2x3dv UniformMatrix2x3dv}
      */
     public static void glUniformMatrix2x3dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix2x3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length / 6, transpose, value);
+        GL40C.glUniformMatrix2x3dv(location, transpose, value);
     }
 
     /**
@@ -1657,11 +1578,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix2x4dv UniformMatrix2x4dv}
      */
     public static void glUniformMatrix2x4dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix2x4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length >> 3, transpose, value);
+        GL40C.glUniformMatrix2x4dv(location, transpose, value);
     }
 
     /**
@@ -1670,11 +1587,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix3x2dv UniformMatrix3x2dv}
      */
     public static void glUniformMatrix3x2dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix3x2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length / 6, transpose, value);
+        GL40C.glUniformMatrix3x2dv(location, transpose, value);
     }
 
     /**
@@ -1683,11 +1596,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix3x4dv UniformMatrix3x4dv}
      */
     public static void glUniformMatrix3x4dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix3x4dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length / 12, transpose, value);
+        GL40C.glUniformMatrix3x4dv(location, transpose, value);
     }
 
     /**
@@ -1696,11 +1605,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix4x2dv UniformMatrix4x2dv}
      */
     public static void glUniformMatrix4x2dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix4x2dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length >> 3, transpose, value);
+        GL40C.glUniformMatrix4x2dv(location, transpose, value);
     }
 
     /**
@@ -1709,11 +1614,7 @@ public class GL40 {
      * Array version of: {@link #glUniformMatrix4x3dv UniformMatrix4x3dv}
      */
     public static void glUniformMatrix4x3dv(@NativeType("GLint") int location, @NativeType("GLboolean") boolean transpose, @NativeType("GLdouble const *") double[] value) {
-        long __functionAddress = GL.getICD().glUniformMatrix4x3dv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, location, value.length / 12, transpose, value);
+        GL40C.glUniformMatrix4x3dv(location, transpose, value);
     }
 
     /**
@@ -1722,12 +1623,7 @@ public class GL40 {
      * Array version of: {@link #glGetUniformdv GetUniformdv}
      */
     public static void glGetUniformdv(@NativeType("GLuint") int program, @NativeType("GLint") int location, @NativeType("GLdouble *") double[] params) {
-        long __functionAddress = GL.getICD().glGetUniformdv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, program, location, params);
+        GL40C.glGetUniformdv(program, location, params);
     }
 
     /**
@@ -1736,12 +1632,7 @@ public class GL40 {
      * Array version of: {@link #glGetActiveSubroutineUniformiv GetActiveSubroutineUniformiv}
      */
     public static void glGetActiveSubroutineUniformiv(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] values) {
-        long __functionAddress = GL.getICD().glGetActiveSubroutineUniformiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(values, 1);
-        }
-        callPV(__functionAddress, program, shadertype, index, pname, values);
+        GL40C.glGetActiveSubroutineUniformiv(program, shadertype, index, pname, values);
     }
 
     /**
@@ -1750,12 +1641,7 @@ public class GL40 {
      * Array version of: {@link #glGetActiveSubroutineUniformName GetActiveSubroutineUniformName}
      */
     public static void glGetActiveSubroutineUniformName(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @Nullable @NativeType("GLsizei *") int[] length, @NativeType("GLchar *") ByteBuffer name) {
-        long __functionAddress = GL.getICD().glGetActiveSubroutineUniformName;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(length, 1);
-        }
-        callPPV(__functionAddress, program, shadertype, index, name.remaining(), length, memAddress(name));
+        GL40C.glGetActiveSubroutineUniformName(program, shadertype, index, length, name);
     }
 
     /**
@@ -1764,12 +1650,7 @@ public class GL40 {
      * Array version of: {@link #glGetActiveSubroutineName GetActiveSubroutineName}
      */
     public static void glGetActiveSubroutineName(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLuint") int index, @Nullable @NativeType("GLsizei *") int[] length, @NativeType("GLchar *") ByteBuffer name) {
-        long __functionAddress = GL.getICD().glGetActiveSubroutineName;
-        if (CHECKS) {
-            check(__functionAddress);
-            checkSafe(length, 1);
-        }
-        callPPV(__functionAddress, program, shadertype, index, name.remaining(), length, memAddress(name));
+        GL40C.glGetActiveSubroutineName(program, shadertype, index, length, name);
     }
 
     /**
@@ -1778,11 +1659,7 @@ public class GL40 {
      * Array version of: {@link #glUniformSubroutinesuiv UniformSubroutinesuiv}
      */
     public static void glUniformSubroutinesuiv(@NativeType("GLenum") int shadertype, @NativeType("GLuint const *") int[] indices) {
-        long __functionAddress = GL.getICD().glUniformSubroutinesuiv;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, shadertype, indices.length, indices);
+        GL40C.glUniformSubroutinesuiv(shadertype, indices);
     }
 
     /**
@@ -1791,12 +1668,7 @@ public class GL40 {
      * Array version of: {@link #glGetUniformSubroutineuiv GetUniformSubroutineuiv}
      */
     public static void glGetUniformSubroutineuiv(@NativeType("GLenum") int shadertype, @NativeType("GLint") int location, @NativeType("GLuint *") int[] params) {
-        long __functionAddress = GL.getICD().glGetUniformSubroutineuiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, shadertype, location, params);
+        GL40C.glGetUniformSubroutineuiv(shadertype, location, params);
     }
 
     /**
@@ -1805,12 +1677,7 @@ public class GL40 {
      * Array version of: {@link #glGetProgramStageiv GetProgramStageiv}
      */
     public static void glGetProgramStageiv(@NativeType("GLuint") int program, @NativeType("GLenum") int shadertype, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] values) {
-        long __functionAddress = GL.getICD().glGetProgramStageiv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(values, 1);
-        }
-        callPV(__functionAddress, program, shadertype, pname, values);
+        GL40C.glGetProgramStageiv(program, shadertype, pname, values);
     }
 
     /**
@@ -1819,14 +1686,7 @@ public class GL40 {
      * Array version of: {@link #glPatchParameterfv PatchParameterfv}
      */
     public static void glPatchParameterfv(@NativeType("GLenum") int pname, @NativeType("GLfloat const *") float[] values) {
-        long __functionAddress = GL.getICD().glPatchParameterfv;
-        if (CHECKS) {
-            check(__functionAddress);
-            if (DEBUG) {
-                check(values, GL11.glGetInteger(GL_PATCH_VERTICES));
-            }
-        }
-        callPV(__functionAddress, pname, values);
+        GL40C.glPatchParameterfv(pname, values);
     }
 
     /**
@@ -1835,11 +1695,7 @@ public class GL40 {
      * Array version of: {@link #glDeleteTransformFeedbacks DeleteTransformFeedbacks}
      */
     public static void glDeleteTransformFeedbacks(@NativeType("GLuint const *") int[] ids) {
-        long __functionAddress = GL.getICD().glDeleteTransformFeedbacks;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, ids.length, ids);
+        GL40C.glDeleteTransformFeedbacks(ids);
     }
 
     /**
@@ -1848,11 +1704,7 @@ public class GL40 {
      * Array version of: {@link #glGenTransformFeedbacks GenTransformFeedbacks}
      */
     public static void glGenTransformFeedbacks(@NativeType("GLuint *") int[] ids) {
-        long __functionAddress = GL.getICD().glGenTransformFeedbacks;
-        if (CHECKS) {
-            check(__functionAddress);
-        }
-        callPV(__functionAddress, ids.length, ids);
+        GL40C.glGenTransformFeedbacks(ids);
     }
 
     /**
@@ -1861,12 +1713,7 @@ public class GL40 {
      * Array version of: {@link #glGetQueryIndexediv GetQueryIndexediv}
      */
     public static void glGetQueryIndexediv(@NativeType("GLenum") int target, @NativeType("GLuint") int index, @NativeType("GLenum") int pname, @NativeType("GLint *") int[] params) {
-        long __functionAddress = GL.getICD().glGetQueryIndexediv;
-        if (CHECKS) {
-            check(__functionAddress);
-            check(params, 1);
-        }
-        callPV(__functionAddress, target, index, pname, params);
+        GL40C.glGetQueryIndexediv(target, index, pname, params);
     }
 
 }
